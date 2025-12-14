@@ -151,6 +151,7 @@ spring.jpa.show-sql=true
 
 ## 앞으로 정리할 문서(추가 예정)
 
+- [엔티티 설계 문서](ENTITY_DESIGN.md) ✅ **완료**
 - 기능 명세서 (MVP 기준)
 - API 명세서 (Endpoint / Request/Response / Error)
 - DB 스키마 / ERD
