@@ -1,4 +1,4 @@
-# WhaThis?!
+# WhaThis
 
 SeSAC **1차 팀 프로젝트**로 Wadiz를 벤치마킹한 **e-Commerce / 크라우드 펀딩** 웹 서비스 **WhaThis**의 백엔드 레포지토리입니다.
 
@@ -30,7 +30,7 @@ SeSAC **1차 팀 프로젝트**로 Wadiz를 벤치마킹한 **e-Commerce / 크�
 
 ### Wadiz 대표 기능 중 이번 MVP 우선순위
 
-- **펀딩(Funding)**: 출시 전/최초 공개 제품을 목표 금액 달성 시 프로젝트가 진행되는 구조
+- **펀딩(Funding)**: 출시 전 / 최초 공개 제품을 목표 금액 달성 시 프로젝트가 진행되는 구조
   - 사용자 역할: **판매자 / 구매자** (필터 또는 권한에 따라 기능/화면 분리)
   - 주요 도메인: 상품, 재고, 주문/결제(예약 결제), 오픈 예정(특정 시간에 공개)
 
@@ -106,38 +106,53 @@ SeSAC **1차 팀 프로젝트**로 Wadiz를 벤치마킹한 **e-Commerce / 크�
 
 ---
 
-### DB 설정
+### DB 설정 방법 - 인텔리제이 내 환경 변수 방식
 
-`application-local.properties`를 만들고 profile로 실행
-  - 예: `src/main/resources/application-local.properties` 생성 후
+1. `Edit Configurations...`
+2. `Build and run` 탭 -> `Modify Options` 클릭
+3. `Operating Systems` 탭 -> `Environment Variables` 선택
+4. `Environment Variables` 입력 박스 우측의 `$` 표시 선택
+5. 좌측 상단의 `+` 버튼 클릭 (행 3개 생성)
+6. `Name` 탭에 `DB_URL`, `DB_USERNAME`, `DB_PASSWORD` 입력
+7. `Value` 탭에 각각의 Name에 맞는 본인의 MySQL 정보 입력
+8. OK 버튼 클릭 후, Apply 클릭 -> OK 클릭
 
-```properties
-# application-local.properties (예시)
-spring.datasource.url=jdbc:mysql://localhost:3306/whathis?serverTimezone=Asia/Seoul&characterEncoding=utf8
-spring.datasource.username=YOUR_USERNAME
-spring.datasource.password=YOUR_PASSWORD
-spring.jpa.hibernate.ddl-auto=update
-spring.jpa.show-sql=true
+```yml
+  datasource:
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+    driver-class-name: com.mysql.cj.jdbc.Driver
 ```
 
 ---
 
 ## 협업 규칙(초안)
 
-### 브랜치 전략
+### 1. 브랜치 전략
 
 - `main`: 배포/제출 기준 브랜치
 - `dev`: 통합 개발 브랜치
 - `feat/엔티티명`: 기능 개발 브랜치 (예: `feat/user`)
 - `fix/엔티티명`: 버그 수정 브랜치
 
-### 커밋 메시지 컨벤션
+### 2. 커밋 메시지 컨벤션
 
 - `feat/엔티티명`: 기능 추가 or 새로운 작업
 - `fix/엔티티명`: 코드 수정 (버그 등)
 - `refactor/엔티티명`: 리팩토링 작업
 - `docs/엔티티명`: 문서 변경
 - `chore/엔티티명`: 설정/빌드 작업 or 주석 수정
+
+### 3. 개발하기 전에는 Repository에 Issue를 먼저 생성하기
+
+- 이슈 제목: 곧 진행할 개발의 요점
+- 이슈 내용: 곧 진행할 개발에 대한 설명
+
+### 4. 커밋이나 PR을 생성할 때는 팀원에게 꼭 연락 취하기
+
+- ex1) PR 올렸으니 확인 및 리뷰 부탁드립니다.
+- ex2) PR 올렸으니 확인 후 merge 부탁드립니다.
 
 ---
 
@@ -151,7 +166,7 @@ spring.jpa.show-sql=true
 
 ## 앞으로 정리할 문서(추가 예정)
 
-- [엔티티 설계 문서](ENTITY_DESIGN.md) ✅ **완료**
+- [엔티티 설계 문서](ENTITY_DESIGN.md)
 - 기능 명세서 (MVP 기준)
 - API 명세서 (Endpoint / Request/Response / Error)
 - DB 스키마 / ERD
