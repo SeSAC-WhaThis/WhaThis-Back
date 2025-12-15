@@ -143,7 +143,7 @@ User (판매자/구매자)
 ## 📚 참고 자료
 
 - [엔티티 설계 상세 문서](ENTITY_DESIGN.md)
-- [README.md](README.md) - 프로젝트 개요
+- [README.md](../README.md) - 프로젝트 개요
 
 ---
 

@@ -166,7 +166,7 @@ SeSAC **1차 팀 프로젝트**로 Wadiz를 벤치마킹한 **e-Commerce / 크�
 
 ## 앞으로 정리할 문서(추가 예정)
 
-- [엔티티 설계 문서](ENTITY_DESIGN.md)
+- [엔티티 설계 문서](docs/ENTITY_DESIGN.md)
 - 기능 명세서 (MVP 기준)
 - API 명세서 (Endpoint / Request/Response / Error)
 - DB 스키마 / ERD
