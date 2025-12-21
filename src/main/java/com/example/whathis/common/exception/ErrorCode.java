@@ -30,6 +30,7 @@ public enum ErrorCode {
     // 409 Conflict
     ALREADY_EXISTS("ALREADY_EXISTS", "이미 존재합니다"),
     DUPLICATE_EMAIL("DUPLICATE_EMAIL", "이미 사용 중인 이메일입니다"),
+    DUPLICATE_NICKNAME("DUPLICATE_NICKNAME", "이미 사용 중인 닉네임입니다."),
     ALREADY_LIKED("ALREADY_LIKED", "이미 좋아요한 상품입니다"),
     NOT_LIKED("NOT_LIKED", "좋아요하지 않은 게시물입니다"),
     ALREADY_FOLLOWING("ALREADY_FOLLOWING", "이미 팔로우 중입니다"),

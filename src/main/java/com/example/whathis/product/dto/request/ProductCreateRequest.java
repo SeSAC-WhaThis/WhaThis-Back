@@ -33,9 +33,11 @@ public class ProductCreateRequest {
     private String thumbnailImageUrl;
     
     @NotBlank(message = "제목은 필수입니다.")
+    @Size(max = 40, message = "제목은 40자 이내로 입력해야 합니다.")
     private String title;
     
     @NotBlank(message = "설명은 필수입니다.")
+    @Size(max = 500, message = "설명은 500자 이내로 입력해야 합니다.")
     private String description;
     
     @NotNull(message = "가격은 필수입니다.")

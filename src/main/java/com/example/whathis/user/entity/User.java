@@ -10,8 +10,10 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Getter
@@ -32,16 +34,30 @@ public class User extends BaseEntity {
     @Column(nullable = false)
     private String name;
 
+    @Column(nullable = false, unique = true)
+    private String nickname;
+
     private String phoneNumber;
 
     private String address;
 
-    // 판매자 / 구매자 역할 구분
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private UserRole role;
-
-    // 프로필 이미지
+    @Setter
     private String profileImageUrl;
 
+    @Setter
+    private String brn;
+
+    @Builder
+    public User(String email, String password, String name, String nickname) {
+        this.email = email;
+        this.password = password;
+        this.name = name;
+        this.nickname = nickname;
+    }
+
+    // 전화번호, 주소는 주문 시 배송지 정보에 입력
+    public void setDeliveryInfo(String phoneNumber, String address) {
+        this.phoneNumber = phoneNumber;
+        this.address = address;
+    }
 }
