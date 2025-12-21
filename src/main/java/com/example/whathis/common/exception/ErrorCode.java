@@ -1,8 +1,10 @@
 package com.example.whathis.common.exception;
 
-/**
- * API 에러 코드 정의
- */
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+
+@Getter
+@RequiredArgsConstructor
 public enum ErrorCode {
     
     // 400 Bad Request
@@ -29,6 +31,7 @@ public enum ErrorCode {
     ALREADY_EXISTS("ALREADY_EXISTS", "이미 존재합니다"),
     DUPLICATE_EMAIL("DUPLICATE_EMAIL", "이미 사용 중인 이메일입니다"),
     ALREADY_LIKED("ALREADY_LIKED", "이미 좋아요한 상품입니다"),
+    NOT_LIKED("NOT_LIKED", "좋아요하지 않은 게시물입니다"),
     ALREADY_FOLLOWING("ALREADY_FOLLOWING", "이미 팔로우 중입니다"),
     OUT_OF_STOCK("OUT_OF_STOCK", "재고가 부족합니다"),
     
@@ -43,18 +46,6 @@ public enum ErrorCode {
     
     private final String code;
     private final String message;
-    
-    ErrorCode(String code, String message) {
-        this.code = code;
-        this.message = message;
-    }
-    
-    public String getCode() {
-        return code;
-    }
-    
-    public String getMessage() {
-        return message;
-    }
+
 }
 
