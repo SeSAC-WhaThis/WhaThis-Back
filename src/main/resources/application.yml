@@ -17,13 +17,13 @@ spring:
       hibernate:
         dialect: org.hibernate.dialect.MySQLDialect
         format_sql: true
-        show_sql: true
     show-sql: true
+    defer-datasource-initialization: true  # JPA 테이블 생성 후 data.sql 실행
 
   # SQL 로깅
   sql:
     init:
-      mode: never
+      mode: always
 
 # 로깅 설정
 logging:
