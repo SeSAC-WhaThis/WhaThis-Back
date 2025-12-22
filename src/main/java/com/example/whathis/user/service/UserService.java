@@ -2,11 +2,15 @@ package com.example.whathis.user.service;
 
 import com.example.whathis.common.exception.BusinessException;
 import com.example.whathis.common.exception.ErrorCode;
+import com.example.whathis.config.JwtProvider;
+import com.example.whathis.user.dto.request.LoginRequest;
 import com.example.whathis.user.dto.request.SignupRequest;
+import com.example.whathis.user.dto.response.TokenResponse;
 import com.example.whathis.user.dto.response.UserResponse;
 import com.example.whathis.user.entity.User;
 import com.example.whathis.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.antlr.v4.runtime.Token;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,6 +22,7 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final JwtProvider  jwtProvider;
 
     @Transactional
     public UserResponse signup(SignupRequest request) {
@@ -42,4 +47,20 @@ public class UserService {
         return UserResponse.from(savedUser);
     }
 
+    @Transactional
+    public TokenResponse login(LoginRequest request) {
+        User user = userRepository.findByEmail(request.getEmail())
+                .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
+
+        if(!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
+            throw new BusinessException(ErrorCode.INVALID_PASSWORD);
+        }
+
+        String token = jwtProvider.createToken(user.getEmail());
+
+        return TokenResponse.builder()
+                .accessToken(token)
+                .tokenType("Bearer")
+                .build();
+    }
 }
