@@ -23,11 +23,16 @@ spring:
   # SQL 로깅
   sql:
     init:
-      mode: always
+      mode: never
 
 # 로깅 설정
 logging:
   level:
     org.hibernate.SQL: debug
     org.hibernate.type.descriptor.sql.BasicBinder: trace
+
+# JWT 설정
+jwt:
+  secret: ${JWT_SECRET_KEY}
+  expiration: 3600000 # 1시간
 
