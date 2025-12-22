@@ -1,6 +1,7 @@
 package com.example.whathis.product.controller;
 
 import com.example.whathis.common.response.ApiResponse;
+import com.example.whathis.config.CustomUserDetails;
 import com.example.whathis.product.dto.request.ProductCreateRequest;
 import com.example.whathis.product.dto.request.ProductUpdateRequest;
 import com.example.whathis.product.dto.response.ProductDetailResponse;
@@ -34,8 +35,9 @@ public class ProductController {
     @PostMapping
     public ResponseEntity<ApiResponse<ProductResponse>> saveProduct(
         @Valid @RequestBody ProductCreateRequest request,
-        @AuthenticationPrincipal User currentUser
+        @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
+        User currentUser = userDetails != null ? userDetails.getUser() : null;
         ProductResponse response = productService.save(request, currentUser);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(ApiResponse.success(response, "제품이 성공적으로 등록되었습니다."));
@@ -52,8 +54,10 @@ public class ProductController {
     @GetMapping("/{productId}")
     public ResponseEntity<ApiResponse<ProductDetailResponse>> findProductById(
         @PathVariable Long productId,
-        @AuthenticationPrincipal User currentUser
+        @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
+        // 비로그인 사용자도 조회 가능 (isLiked는 false로 반환)
+        User currentUser = userDetails != null ? userDetails.getUser() : null;
         ProductDetailResponse response = productService.findById(productId, currentUser);
         return ResponseEntity.ok(ApiResponse.success(response));
     }
@@ -63,8 +67,9 @@ public class ProductController {
     public ResponseEntity<ApiResponse<ProductDetailResponse>> updateProduct(
         @PathVariable Long productId,
         @Valid @RequestBody ProductUpdateRequest request,
-        @AuthenticationPrincipal User currentUser
+        @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
+        User currentUser = userDetails != null ? userDetails.getUser() : null;
         ProductDetailResponse response = productService.update(productId, request, currentUser);
         return ResponseEntity.ok(ApiResponse.success(response, "제품 정보가 수정되었습니다"));
     }
@@ -73,8 +78,9 @@ public class ProductController {
     @DeleteMapping("/{productId}")
     public ResponseEntity<Void> deleteProductById(
         @PathVariable Long productId,
-        @AuthenticationPrincipal User currentUser
+        @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
+        User currentUser = userDetails != null ? userDetails.getUser() : null;
         productService.delete(productId, currentUser);
         return ResponseEntity.noContent().build();
     }
@@ -83,8 +89,9 @@ public class ProductController {
     @PostMapping("/{productId}/like")
     public ResponseEntity<ApiResponse<ProductDetailResponse>> like(
         @PathVariable Long productId,
-        @AuthenticationPrincipal User currentUser
+        @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
+        User currentUser = userDetails != null ? userDetails.getUser() : null;
         ProductDetailResponse response = productLikeService.like(currentUser, productId);
         return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success(response));
     }
@@ -93,8 +100,9 @@ public class ProductController {
     @DeleteMapping("/{productId}/like")
     public ResponseEntity<ApiResponse<ProductDetailResponse>> unlike(
         @PathVariable Long productId,
-        @AuthenticationPrincipal User currentUser
+        @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
+        User currentUser = userDetails != null ? userDetails.getUser() : null;
         ProductDetailResponse response = productLikeService.unlike(currentUser, productId);
         return ResponseEntity.ok(ApiResponse.success(response));
     }
