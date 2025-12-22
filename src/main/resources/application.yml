@@ -23,7 +23,7 @@ spring:
   # SQL 로깅
   sql:
     init:
-      mode: never
+      mode: always
 
 # 로깅 설정
 logging:
