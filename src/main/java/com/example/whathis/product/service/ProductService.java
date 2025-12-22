@@ -35,17 +35,10 @@ public class ProductService {
         ProductCreateRequest request,
         User currentUser
     ) {
-        // 1. 로그인 체크 (테스트용: 로그인 시스템 없을 시 샘플 유저 사용)
-        if (currentUser == null) {
-            // TODO: 실제 인증 시스템 구현 후 이 부분 제거하고 예외 던지기
-            currentUser = userRepository.findById(1L)
-                .orElseThrow(() -> new BusinessException(ErrorCode.UNAUTHORIZED));
-        }
-
-        // 실제 로그인 체크는 아래 if문 사용 (인증 시스템 구현 후)
-        // if (currentUser == null) {
-        //     throw new BusinessException(ErrorCode.UNAUTHORIZED, "로그인이 필요합니다.");
-        // }
+        // 1. 유저 로그인 체크
+         if (currentUser == null) {
+             throw new BusinessException(ErrorCode.UNAUTHORIZED, "로그인이 필요합니다.");
+         }
         
         // 2. 사업자등록번호 체크 & 저장 (최초 상품 등록 시에만)
         if (currentUser.getBrn() == null) {
@@ -68,18 +61,7 @@ public class ProductService {
         validateProductDates(request.getStartDate(), request.getEndDate());
         
         // 5. Product 생성
-        Product product = Product.of(
-                request.getTitle(),
-                request.getDescription(),
-                currentUser,  // 판매자
-                category,
-                request.getPrice(),
-                request.getGoalAmount(),
-                request.getStartDate(),
-                request.getEndDate(),
-                request.getThumbnailImageUrl(),
-                request.getInventory()
-        );
+        Product product = Product.of(request, currentUser, category);
         
         // 6. Product 저장
         Product savedProduct = productRepository.save(product);
@@ -141,16 +123,10 @@ public class ProductService {
     public ProductDetailResponse update(
         Long productId, ProductUpdateRequest request, User currentUser
     ) {
-        // 1. 로그인 체크 (테스트용: 로그인 시스템 없을 시 샘플 유저 사용)
-        if (currentUser == null) {
-            currentUser = userRepository.findById(1L)
-                .orElseThrow(() -> new BusinessException(ErrorCode.UNAUTHORIZED));
-        }
-
-        // 실제 로그인 체크는 아래 if문 사용 (인증 시스템 구현 후)
-        // if (currentUser == null) {
-        //     throw new BusinessException(ErrorCode.UNAUTHORIZED, "로그인이 필요합니다.");
-        // }
+        // 1. 로그인 체크
+         if (currentUser == null) {
+             throw new BusinessException(ErrorCode.UNAUTHORIZED, "로그인이 필요합니다.");
+         }
         
         // 2. Product 조회
         Product foundProduct = productRepository.findById(productId)
@@ -187,16 +163,10 @@ public class ProductService {
 
     @Transactional
     public void delete(Long productId, User currentUser) {
-        // 1. 로그인 체크 (테스트용: 로그인 시스템 없을 시 샘플 유저 사용)
-        if (currentUser == null) {
-            currentUser = userRepository.findById(1L)
-                .orElseThrow(() -> new BusinessException(ErrorCode.UNAUTHORIZED));
-        }
-
-        // 실제 로그인 체크는 아래 if문 사용 (인증 시스템 구현 후)
-        // if (currentUser == null) {
-        //     throw new BusinessException(ErrorCode.UNAUTHORIZED, "로그인이 필요합니다.");
-        // }
+        // 1. 로그인 체크
+         if (currentUser == null) {
+             throw new BusinessException(ErrorCode.UNAUTHORIZED, "로그인이 필요합니다.");
+         }
         
         // 2. Product 조회
         Product foundProduct = productRepository.findById(productId)

@@ -3,6 +3,7 @@ package com.example.whathis.product.entity;
 import com.example.whathis.BaseEntity;
 import com.example.whathis.category.entity.Category;
 import com.example.whathis.common.product.ProductStatus;
+import com.example.whathis.product.dto.request.ProductCreateRequest;
 import com.example.whathis.user.entity.User;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -19,13 +20,15 @@ import jakarta.validation.constraints.Min;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDateTime;
+import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
 @Table(name = "products")
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Product extends BaseEntity {
 
     @Id
@@ -89,28 +92,46 @@ public class Product extends BaseEntity {
     @Column(nullable = false)
     private String thumbnailImageUrl;
 
-    // 정적 팩토리 메서드
-    public static Product of(
-        String title, String description, User seller, Category category, BigDecimal price,
-        BigDecimal goalAmount, LocalDateTime startDate, LocalDateTime endDate, 
-        String thumbnailImageUrl, Integer inventory
+    @Builder
+    private Product(
+        String title, String description, User seller, Category category,
+        BigDecimal price, BigDecimal goalAmount, LocalDateTime startDate,
+        LocalDateTime endDate, String thumbnailImageUrl, Integer inventory
     ) {
-        Product product = new Product();
-        product.title = title;
-        product.description = description;
-        product.seller = seller;
-        product.category = category;
-        product.price = price;
-        product.goalAmount = goalAmount;
-        product.startDate = startDate;
-        product.endDate = endDate;
-        product.thumbnailImageUrl = thumbnailImageUrl;
-        product.inventory = inventory;
-        product.status = ProductStatus.PREPARING;
-        product.currentAmount = BigDecimal.ZERO;
-        product.buyerCount = 0;
-        product.viewCount = 0;
-        return product;
+        this.title = title;
+        this.description = description;
+        this.seller = seller;
+        this.category = category;
+        this.price = price;
+        this.goalAmount = goalAmount;
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.thumbnailImageUrl = thumbnailImageUrl;
+        this.inventory = inventory;
+        this.status = ProductStatus.PREPARING;
+        this.currentAmount = BigDecimal.ZERO;
+        this.buyerCount = 0;
+        this.viewCount = 0;
+    }
+
+    // ProductCreateRequest DTO 객체로부터 Product 엔티티 생성
+    public static Product of(
+        ProductCreateRequest request,
+        User seller,
+        Category category
+    ) {
+        return Product.builder()
+                .title(request.getTitle())
+                .description(request.getDescription())
+                .seller(seller)
+                .category(category)
+                .price(request.getPrice())
+                .goalAmount(request.getGoalAmount())
+                .startDate(request.getStartDate())
+                .endDate(request.getEndDate())
+                .thumbnailImageUrl(request.getThumbnailImageUrl())
+                .inventory(request.getInventory())
+                .build();
     }
     
     // ========== 아래부터는 비즈니스 메서드 ==========
