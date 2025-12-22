@@ -129,30 +129,15 @@ public class ProductService {
 
     // 제품 상세 조회
     @Transactional  // 조회수 증가를 위해 @Transactional 필요
-    public ProductDetailResponse findById(
-        Long productId, User currentUser
-    ) {
-        // 1. Product 조회 (N+1 방지: seller, category fetch join)
-        Product foundProduct = productRepository.findByIdWithSellerAndCategory(productId)
-            .orElseThrow(() -> new BusinessException(ErrorCode.PRODUCT_NOT_FOUND));
-        
-        // 2. 조회수 증가
-        foundProduct.increaseViewCount();
-        
-        // 3. 좋아요 수 조회
-        Long likeCount = productLikeRepository.countByProductId(productId);
-        
-        // 4. 현재 사용자의 좋아요 여부 확인
-        boolean isLiked = false;
-        if (currentUser != null) {
-            isLiked = productLikeRepository.existsByUserIdAndProductId(
-                currentUser.getId(), 
-                productId
-            );
-        }
-        
-        // 5. ProductDetailResponse 반환
-        return ProductDetailResponse.from(foundProduct, likeCount, isLiked);
+    public ProductDetailResponse findById(Long productId, User currentUser) {
+        return getDetailInternal(productId, currentUser, true);
+    }
+
+    // 제품 상세 조회 (제품 정보 수정, 좋아요 요청 시 사용)
+    // 제품 정보 수정, 좋아요, 좋아요 취소 -> 조회수가 증가하지 않아야 함.
+    @Transactional(readOnly = true)
+    public ProductDetailResponse getDetail(Long productId, User currentUser) {
+        return getDetailInternal(productId, currentUser, false);
     }
     
     @Transactional
@@ -161,12 +146,14 @@ public class ProductService {
     ) {
         // 1. 로그인 체크 (테스트용: 로그인 시스템 없을 시 샘플 유저 사용)
         if (currentUser == null) {
-            // TODO: 실제 인증 시스템 구현 후 이 부분 제거하고 예외 던지기
             currentUser = userRepository.findById(1L)
-                .orElseThrow(() -> new BusinessException(ErrorCode.UNAUTHORIZED, 
-                    "테스트용 샘플 유저(id=1)가 DB에 없습니다."));
-            System.out.println("[테스트] 샘플 유저(id=1) 사용 중");
+                .orElseThrow(() -> new BusinessException(ErrorCode.UNAUTHORIZED));
         }
+
+        // 실제 로그인 체크는 아래 if문 사용 (인증 시스템 구현 후)
+        // if (currentUser == null) {
+        //     throw new BusinessException(ErrorCode.UNAUTHORIZED, "로그인이 필요합니다.");
+        // }
         
         // 2. Product 조회
         Product foundProduct = productRepository.findById(productId)
@@ -198,19 +185,21 @@ public class ProductService {
         }
         
         // 6. 업데이트된 상품 반환
-        return findById(productId, currentUser);
+        return getDetail(productId, currentUser);
     }
 
     @Transactional
     public void delete(Long productId, User currentUser) {
         // 1. 로그인 체크 (테스트용: 로그인 시스템 없을 시 샘플 유저 사용)
         if (currentUser == null) {
-            // TODO: 실제 인증 시스템 구현 후 이 부분 제거하고 예외 던지기
             currentUser = userRepository.findById(1L)
-                .orElseThrow(() -> new BusinessException(ErrorCode.UNAUTHORIZED, 
-                    "테스트용 샘플 유저(id=1)가 DB에 없습니다."));
-            System.out.println("[테스트] 샘플 유저(id=1) 사용 중");
+                .orElseThrow(() -> new BusinessException(ErrorCode.UNAUTHORIZED));
         }
+
+        // 실제 로그인 체크는 아래 if문 사용 (인증 시스템 구현 후)
+        // if (currentUser == null) {
+        //     throw new BusinessException(ErrorCode.UNAUTHORIZED, "로그인이 필요합니다.");
+        // }
         
         // 2. Product 조회
         Product foundProduct = productRepository.findById(productId)
@@ -228,6 +217,33 @@ public class ProductService {
         
         // 5. 삭제
         productRepository.delete(foundProduct);
+    }
+
+    private ProductDetailResponse getDetailInternal(
+        Long productId,
+        User currentUser,
+        boolean increaseViewCount
+    ) {
+        // 1. Product 조회 (N+1 방지: seller, category fetch join)
+        Product foundProduct = productRepository.findByIdWithSellerAndCategory(productId)
+                    .orElseThrow(() -> new BusinessException(ErrorCode.PRODUCT_NOT_FOUND));
+
+        // 2. 조회수 증가
+        if (increaseViewCount) {
+            foundProduct.increaseViewCount();
+        }
+
+        // 3. 좋아요 수 조회
+        Long likeCount = productLikeRepository.countByProductId(productId);
+
+        // 4. 현재 사용자의 좋아요 여부 확인
+        boolean isLiked = false;
+        if (currentUser != null) {
+            isLiked = productLikeRepository.existsByUserIdAndProductId(currentUser.getId(), productId);
+        }
+
+        // 5. ProductDetailResponse 반환
+        return ProductDetailResponse.from(foundProduct, likeCount, isLiked);
     }
 
 }

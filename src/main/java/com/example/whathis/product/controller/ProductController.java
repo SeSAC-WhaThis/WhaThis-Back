@@ -6,6 +6,7 @@ import com.example.whathis.product.dto.request.ProductUpdateRequest;
 import com.example.whathis.product.dto.response.ProductDetailResponse;
 import com.example.whathis.product.dto.response.ProductResponse;
 import com.example.whathis.product.service.ProductService;
+import com.example.whathis.productlike.service.ProductLikeService;
 import com.example.whathis.user.entity.User;
 import jakarta.validation.Valid;
 import java.util.List;
@@ -28,6 +29,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class ProductController {
 
     private final ProductService productService;
+    private final ProductLikeService productLikeService;
 
     @PostMapping
     public ResponseEntity<ApiResponse<ProductResponse>> saveProduct(
@@ -75,6 +77,26 @@ public class ProductController {
     ) {
         productService.delete(productId, currentUser);
         return ResponseEntity.noContent().build();
+    }
+
+    // 제품 좋아요
+    @PostMapping("/{productId}/like")
+    public ResponseEntity<ApiResponse<ProductDetailResponse>> like(
+        @PathVariable Long productId,
+        @AuthenticationPrincipal User currentUser
+    ) {
+        ProductDetailResponse response = productLikeService.like(currentUser, productId);
+        return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success(response));
+    }
+
+    // 제품 좋아요 취소
+    @DeleteMapping("/{productId}/like")
+    public ResponseEntity<ApiResponse<ProductDetailResponse>> unlike(
+        @PathVariable Long productId,
+        @AuthenticationPrincipal User currentUser
+    ) {
+        ProductDetailResponse response = productLikeService.unlike(currentUser, productId);
+        return ResponseEntity.ok(ApiResponse.success(response));
     }
 
 }
