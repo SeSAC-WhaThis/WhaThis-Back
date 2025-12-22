@@ -39,9 +39,7 @@ public class ProductService {
         if (currentUser == null) {
             // TODO: 실제 인증 시스템 구현 후 이 부분 제거하고 예외 던지기
             currentUser = userRepository.findById(1L)
-                .orElseThrow(() -> new BusinessException(ErrorCode.UNAUTHORIZED, 
-                    "테스트용 샘플 유저(id=1)가 DB에 없습니다. data.sql을 먼저 실행하세요."));
-            System.out.println("[테스트] 샘플 유저(id=1) 사용 중");
+                .orElseThrow(() -> new BusinessException(ErrorCode.UNAUTHORIZED));
         }
 
         // 실제 로그인 체크는 아래 if문 사용 (인증 시스템 구현 후)
@@ -135,7 +133,6 @@ public class ProductService {
 
     // 제품 상세 조회 (제품 정보 수정, 좋아요 요청 시 사용)
     // 제품 정보 수정, 좋아요, 좋아요 취소 -> 조회수가 증가하지 않아야 함.
-    @Transactional(readOnly = true)
     public ProductDetailResponse getDetail(Long productId, User currentUser) {
         return getDetailInternal(productId, currentUser, false);
     }
