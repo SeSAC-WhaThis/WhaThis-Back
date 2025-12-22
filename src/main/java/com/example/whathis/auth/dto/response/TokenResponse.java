@@ -1,4 +1,4 @@
-package com.example.whathis.user.dto.response;
+package com.example.whathis.auth.dto.response;
 
 import lombok.Builder;
 import lombok.Getter;
