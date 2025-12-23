@@ -13,6 +13,7 @@ public enum ErrorCode {
     MISSING_INPUT_VALUE("MISSING_INPUT_VALUE", "필수 값이 누락되었습니다"),
     PASSWORD_MISMATCH("PASSWORD_MISMATCH", "새 비밀번호가 일치하지 않습니다"),
     PASSWORD_SAME_AS_OLD("PASSWORD_SAME_AS_OLD", "기존 비밀번호와 동일합니다"),
+    SAME_AS_CURRENT_NICKNAME("SAME_AS_CURRENT_NICKNAME", "기존 닉네임과 동일합니다."),
     
     // 401 Unauthorized
     UNAUTHORIZED("UNAUTHORIZED", "인증이 필요합니다"),
