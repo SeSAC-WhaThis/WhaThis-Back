@@ -32,6 +32,11 @@ public class ProductLikeService {
         Product foundProduct = productRepository.findById(productId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.PRODUCT_NOT_FOUND));
 
+        // 본인의 제품에는 좋아요 불가능
+        if (foundProduct.getSeller().getId().equals(currentUser.getId())) {
+            throw new BusinessException(ErrorCode.CANNOT_SELF_LIKE);
+        }
+
         // 유저의 상품 좋아요 여부 확인
         // 좋아요 요청을 한 번 더 보내면 발생하는 에러
         if (productLikeRepository.existsByUserIdAndProductId(currentUser.getId(), foundProduct.getId())) {

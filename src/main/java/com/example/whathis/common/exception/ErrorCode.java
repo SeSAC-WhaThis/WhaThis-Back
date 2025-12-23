@@ -21,6 +21,7 @@ public enum ErrorCode {
     // 403 Forbidden
     FORBIDDEN("FORBIDDEN", "권한이 없습니다"),
     ACCESS_DENIED("ACCESS_DENIED", "접근이 거부되었습니다"),
+    CANNOT_SELF_LIKE("CANNOT_SELF_LIKE", "본인의 제품에는 좋아요를 누를 수 없습니다."),
     
     // 404 Not Found
     NOT_FOUND("NOT_FOUND", "리소스를 찾을 수 없습니다"),
