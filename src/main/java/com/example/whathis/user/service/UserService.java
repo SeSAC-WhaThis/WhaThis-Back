@@ -18,39 +18,35 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
+@Transactional
 public class UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
+    @Transactional(readOnly = true)
     public UserResponse getProfile(User user) {
         return UserResponse.from(user);
     }
 
-    @Transactional
     public UserResponse updateProfile(User user, UserUpdateRequest request) {
-        if(request.getNickname() != null &&
-                !user.getNickname().equals(request.getNickname()) &&
-                userRepository.existsByNickname(request.getNickname())) {
-            throw new BusinessException(ErrorCode.DUPLICATE_NICKNAME);
-        }
-
         User currentUser = userRepository.findById(user.getId())
                 .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
 
-        currentUser.updateProfile(
-                request.getName(),
-                request.getNickname(),
-                request.getPhoneNumber(),
-                request.getAddress(),
-                request.getProfileImageUrl()
-        );
+        if (request.getNickname() != null) {
+            if (currentUser.getNickname().equals(request.getNickname())) {
+                throw new BusinessException(ErrorCode.SAME_AS_CURRENT_NICKNAME);
+            }
+            if (userRepository.existsByNickname(request.getNickname())) {
+                throw new BusinessException(ErrorCode.DUPLICATE_NICKNAME);
+            }
+        }
+
+        currentUser.updateProfile(request);
 
         return UserResponse.from(currentUser);
     }
 
-    @Transactional
     public void updatePassword(User user, PasswordUpdateRequest request) {
         if(!passwordEncoder.matches(request.getCurrentPassword(), user.getPassword())) {
             throw new BusinessException(ErrorCode.INVALID_PASSWORD);
@@ -70,7 +66,6 @@ public class UserService {
         currentUser.updatePassword(passwordEncoder.encode(request.getNewPassword()));
     }
 
-    @Transactional
     public void deleteUser(User user) {
         User currentUser = userRepository.findById(user.getId())
                 .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
