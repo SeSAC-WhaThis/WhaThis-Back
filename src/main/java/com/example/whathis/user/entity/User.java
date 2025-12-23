@@ -1,6 +1,7 @@
 package com.example.whathis.user.entity;
 
 import com.example.whathis.BaseEntity;
+import com.example.whathis.auth.dto.request.UserUpdateRequest;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -56,5 +57,19 @@ public class User extends BaseEntity {
     public void setDeliveryInfo(String phoneNumber, String address) {
         this.phoneNumber = phoneNumber;
         this.address = address;
+    }
+
+    // 회원 정보 수정
+    public void updateProfile(UserUpdateRequest request) {
+        if (request.getName() != null) this.name = request.getName();
+        if (request.getNickname() != null) this.nickname = request.getNickname();
+        if (request.getPhoneNumber() != null) this.phoneNumber = request.getPhoneNumber();
+        if (request.getAddress() != null) this.address = request.getAddress();
+        if (request.getProfileImageUrl() != null) this.profileImageUrl = request.getProfileImageUrl();
+    }
+
+    // 비밀번호 수정
+    public void updatePassword(String encodedPassword) {
+        this.password = encodedPassword;
     }
 }
