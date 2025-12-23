@@ -57,4 +57,18 @@ public class User extends BaseEntity {
         this.phoneNumber = phoneNumber;
         this.address = address;
     }
+
+    // 회원 정보 수정
+    public void updateProfile(String name, String nickname, String phoneNumber, String address, String profileImageUrl) {
+        if(name != null) this.name = name;
+        if(nickname != null) this.nickname = nickname;
+        this.phoneNumber = phoneNumber;
+        this.address = address;
+        this.profileImageUrl = profileImageUrl;
+    }
+
+    // 비밀번호 수정
+    public void updatePassword(String encodedPassword) {
+        this.password = encodedPassword;
+    }
 }
