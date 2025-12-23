@@ -51,7 +51,7 @@ public class UserService {
     }
 
     @Transactional
-    public UserResponse updatePassword(User user, PasswordUpdateRequest request) {
+    public void updatePassword(User user, PasswordUpdateRequest request) {
         if(!passwordEncoder.matches(request.getCurrentPassword(), user.getPassword())) {
             throw new BusinessException(ErrorCode.INVALID_PASSWORD);
         }
@@ -68,8 +68,6 @@ public class UserService {
                 .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
 
         currentUser.updatePassword(passwordEncoder.encode(request.getNewPassword()));
-
-        return  UserResponse.from(currentUser);
     }
 
     @Transactional
