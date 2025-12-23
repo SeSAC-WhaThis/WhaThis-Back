@@ -21,6 +21,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.UUID;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -74,9 +75,25 @@ public class Order extends BaseEntity {
     // ex) ORD-20251214-A3B9C2F1
     @PrePersist
     public void generateOrderNumber() {
-        this.orderNumber = "ORD-"
-            + LocalDate.now().format(DateTimeFormatter.BASIC_ISO_DATE)
-            + "-" + UUID.randomUUID().toString().substring(0, 8).toUpperCase();
+        if (this.orderNumber == null) {
+            this.orderNumber = "ORD-"
+                    + LocalDate.now().format(DateTimeFormatter.BASIC_ISO_DATE)
+                    + "-" + UUID.randomUUID().toString().substring(0, 8).toUpperCase();
+        }
+    }
+
+    @Builder
+    public Order(
+        User buyer, Product product, Integer quantity, BigDecimal totalAmount,
+        OrderStatus status, LocalDateTime reservedPaymentDate, LocalDateTime confirmedAt
+    ) {
+        this.buyer = buyer;
+        this.product = product;
+        this.quantity = quantity;
+        this.totalAmount = totalAmount;
+        this.status = status != null ? status : OrderStatus.PENDING;
+        this.reservedPaymentDate = reservedPaymentDate;
+        this.confirmedAt = confirmedAt;
     }
 
 }

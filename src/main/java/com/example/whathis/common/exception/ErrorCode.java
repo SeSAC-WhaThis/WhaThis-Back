@@ -17,7 +17,6 @@ public enum ErrorCode {
     INVALID_TOKEN("INVALID_TOKEN", "유효하지 않은 토큰입니다"),
     EXPIRED_TOKEN("EXPIRED_TOKEN", "만료된 토큰입니다"),
     INVALID_PASSWORD("INVALID_PASSWORD", "비밀번호가 일치하지 않습니다"),
-
     
     // 403 Forbidden
     FORBIDDEN("FORBIDDEN", "권한이 없습니다"),
@@ -28,6 +27,7 @@ public enum ErrorCode {
     USER_NOT_FOUND("USER_NOT_FOUND", "사용자를 찾을 수 없습니다"),
     PRODUCT_NOT_FOUND("PRODUCT_NOT_FOUND", "상품을 찾을 수 없습니다"),
     ORDER_NOT_FOUND("ORDER_NOT_FOUND", "주문을 찾을 수 없습니다"),
+    REVIEW_NOT_FOUND("REVIEW_NOT_FOUND", "리뷰를 찾을 수 없습니다"),
     
     // 409 Conflict
     ALREADY_EXISTS("ALREADY_EXISTS", "이미 존재합니다"),
@@ -37,12 +37,16 @@ public enum ErrorCode {
     NOT_LIKED("NOT_LIKED", "좋아요하지 않은 게시물입니다"),
     ALREADY_FOLLOWING("ALREADY_FOLLOWING", "이미 팔로우 중입니다"),
     OUT_OF_STOCK("OUT_OF_STOCK", "재고가 부족합니다"),
+    ALREADY_REVIEWED("ALREADY_REVIEWED", "이미 리뷰를 작성한 주문입니다"),
     
     // 422 Unprocessable Entity
     FUNDING_NOT_ONGOING("FUNDING_NOT_ONGOING", "펀딩이 진행 중이 아닙니다"),
     FUNDING_ENDED("FUNDING_ENDED", "펀딩이 종료되었습니다"),
     INVALID_ORDER_STATUS("INVALID_ORDER_STATUS", "주문 상태가 올바르지 않습니다"),
     CANNOT_CANCEL_ORDER("CANNOT_CANCEL_ORDER", "주문을 취소할 수 없습니다"),
+    NOT_YOUR_ORDER("NOT_YOUR_ORDER", "본인의 주문이 아닙니다"),
+    NOT_YOUR_REVIEW("NOT_YOUR_REVIEW", "본인의 리뷰가 아닙니다"),
+    ORDER_NOT_CONFIRMED("ORDER_NOT_CONFIRMED", "주문이 확정되지 않았습니다"),
     
     // 500 Internal Server Error
     INTERNAL_SERVER_ERROR("INTERNAL_SERVER_ERROR", "서버 오류가 발생했습니다");
@@ -51,4 +55,3 @@ public enum ErrorCode {
     private final String message;
 
 }
-
