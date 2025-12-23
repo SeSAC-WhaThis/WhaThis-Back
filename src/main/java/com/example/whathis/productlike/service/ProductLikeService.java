@@ -9,7 +9,6 @@ import com.example.whathis.product.service.ProductService;
 import com.example.whathis.productlike.entity.ProductLike;
 import com.example.whathis.productlike.repository.ProductLikeRepository;
 import com.example.whathis.user.entity.User;
-import com.example.whathis.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,22 +19,14 @@ import org.springframework.transaction.annotation.Transactional;
 public class ProductLikeService {
 
     private final ProductLikeRepository productLikeRepository;
-    private final UserRepository userRepository;
     private final ProductRepository productRepository;
     private final ProductService productService;
 
     public ProductDetailResponse like(User currentUser, Long productId) {
-
-        // 1) 로그인 체크 (테스트용: 로그인 시스템 없을 시 샘플 유저 사용)
+        // 로그인 체크
         if (currentUser == null) {
-            currentUser = userRepository.findById(1L)
-                .orElseThrow(() -> new BusinessException(ErrorCode.UNAUTHORIZED));
+            throw new BusinessException(ErrorCode.UNAUTHORIZED, "로그인이 필요합니다.");
         }
-
-        // 실제 로그인 체크는 아래 if문 사용 (인증 시스템 구현 후)
-        // if (currentUser == null) {
-        //     throw new BusinessException(ErrorCode.UNAUTHORIZED, "로그인이 필요합니다.");
-        // }
 
         // 상품 존재 여부 확인
         Product foundProduct = productRepository.findById(productId)
@@ -60,17 +51,10 @@ public class ProductLikeService {
     }
 
     public ProductDetailResponse unlike(User currentUser, Long productId) {
-
-        // 1) 로그인 체크 (테스트용: 로그인 시스템 없을 시 샘플 유저 사용)
+        // 로그인 체크
         if (currentUser == null) {
-            currentUser = userRepository.findById(1L)
-                .orElseThrow(() -> new BusinessException(ErrorCode.UNAUTHORIZED));
+            throw new BusinessException(ErrorCode.UNAUTHORIZED, "로그인이 필요합니다.");
         }
-
-        // 실제 로그인 체크는 아래 if문 사용 (인증 시스템 구현 후)
-        // if (currentUser == null) {
-        //     throw new BusinessException(ErrorCode.UNAUTHORIZED, "로그인이 필요합니다.");
-        // }
 
         // 상품 존재 여부 확인
         Product foundProduct = productRepository.findById(productId)
