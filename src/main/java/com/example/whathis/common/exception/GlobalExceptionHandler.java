@@ -112,7 +112,7 @@ public class GlobalExceptionHandler {
      */
     private HttpStatus getHttpStatus(ErrorCode errorCode) {
         return switch (errorCode) {
-            case INVALID_INPUT, INVALID_TYPE_VALUE, MISSING_INPUT_VALUE -> HttpStatus.BAD_REQUEST;
+            case INVALID_INPUT, INVALID_TYPE_VALUE, MISSING_INPUT_VALUE, PASSWORD_MISMATCH, PASSWORD_SAME_AS_OLD -> HttpStatus.BAD_REQUEST;
             case UNAUTHORIZED, INVALID_TOKEN, EXPIRED_TOKEN -> HttpStatus.UNAUTHORIZED;
             case FORBIDDEN, ACCESS_DENIED -> HttpStatus.FORBIDDEN;
             case NOT_FOUND, USER_NOT_FOUND, PRODUCT_NOT_FOUND, ORDER_NOT_FOUND -> HttpStatus.NOT_FOUND;
