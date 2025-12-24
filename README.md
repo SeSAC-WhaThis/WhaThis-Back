@@ -12,8 +12,7 @@ SeSAC **1차 팀 프로젝트**로 Wadiz를 벤치마킹한 **e-Commerce / 크�
 
 - **프로젝트명**: WhaThis
 
-- **팀명**: 용수리
-
+- **팀명**: 용수우리
 
 - **기간**
   - **기획 / 정리** : 2025.12.12 ~ 2025.12.16.
@@ -22,7 +21,7 @@ SeSAC **1차 팀 프로젝트**로 Wadiz를 벤치마킹한 **e-Commerce / 크�
 
 - **팀 구성**: 3명
   - **Front-end**: 1인(이용민)
-  - **Back-end**: 2인(김규리, 김수환)
+  - **Back-end**: 3인(김규리, 김수환, 김재우)
 
 ---
 
@@ -58,7 +57,6 @@ SeSAC **1차 팀 프로젝트**로 Wadiz를 벤치마킹한 **e-Commerce / 크�
 
 - **User**
 - **Product**
-- **Inventory**
 - **Payment**
 - **Order**
 - **Follow**
@@ -80,15 +78,19 @@ SeSAC **1차 팀 프로젝트**로 Wadiz를 벤치마킹한 **e-Commerce / 크�
 - 유저(User)
 - 주문(Order)
 - 결제(Payment)
-- 리뷰(Review)
 - 팔로우(Follow)
 
 ### 김수환
 
 - 상품(Product)
-- 재고 관리(Inventory)
+- 리뷰(Review)
 - 카테고리(Category)
 - 상품 좋아요(ProductLike)
+
+### 김재우
+
+- AI 문의 기능(Spring AI)
+- 검색 최적화(Elastic Search)
 
 ---
 
@@ -99,6 +101,8 @@ SeSAC **1차 팀 프로젝트**로 Wadiz를 벤치마킹한 **e-Commerce / 크�
 - Gradle
 - Spring Data JPA
 - Spring Security
+- Spring AI
+- Elastic Search
 - Bean Validation
 - MySQL (예정: Redis)
 - Lombok
@@ -135,6 +139,7 @@ SeSAC **1차 팀 프로젝트**로 Wadiz를 벤치마킹한 **e-Commerce / 크�
 - `dev`: 통합 개발 브랜치
 - `feat/엔티티명`: 기능 개발 브랜치 (예: `feat/user`)
 - `fix/엔티티명`: 버그 수정 브랜치
+- `chore/엔티티명`: 설정/빌드 작업 or 주석 수정
 
 ### 2. 커밋 메시지 컨벤션
 
