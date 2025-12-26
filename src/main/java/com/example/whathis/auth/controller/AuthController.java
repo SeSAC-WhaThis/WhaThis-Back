@@ -52,6 +52,11 @@ public class AuthController {
         @Valid @RequestBody KakaoLoginRequest request
     ) {
         TokenResponse response = authService.kakaoLogin(request.getCode());
-        return ResponseEntity.ok(ApiResponse.success(response));
+        HttpHeaders headers = new HttpHeaders();
+        headers.set(HttpHeaders.AUTHORIZATION, "Bearer " + response.getAccessToken());
+
+        return ResponseEntity.ok()
+                .headers(headers)
+                .body(ApiResponse.successWithMessage("카카오 로그인이 완료되었습니다."));
     }
 }
