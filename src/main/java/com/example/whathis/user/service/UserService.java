@@ -8,6 +8,7 @@ import com.example.whathis.config.JwtProvider;
 import com.example.whathis.auth.dto.request.LoginRequest;
 import com.example.whathis.auth.dto.request.SignupRequest;
 import com.example.whathis.auth.dto.response.TokenResponse;
+import com.example.whathis.follow.repository.FollowRepository;
 import com.example.whathis.user.dto.response.UserResponse;
 import com.example.whathis.user.entity.User;
 import com.example.whathis.user.repository.UserRepository;
@@ -23,6 +24,7 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final FollowRepository followRepository;
 
     @Transactional(readOnly = true)
     public UserResponse getProfile(User user) {
@@ -69,6 +71,11 @@ public class UserService {
     public void deleteUser(User user) {
         User currentUser = userRepository.findById(user.getId())
                 .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
+
+        // 사용자 탈퇴 시 Follow 테이블과의 외래 키 제약 조건으로 인해 500 에러 발생
+        // -> 사용자를 삭제하기 전에 팔로우/팔로잉 관계를 먼저 삭제
+        followRepository.deleteByFollower(currentUser);
+        followRepository.deleteByFollowing(currentUser);
 
         // 진행중인 펀딩이나 주문이 있는지 확인하는 로직은 추후에 추가
         userRepository.delete(currentUser);
