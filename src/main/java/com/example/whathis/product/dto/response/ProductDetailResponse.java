@@ -1,7 +1,9 @@
 package com.example.whathis.product.dto.response;
 
+import com.example.whathis.category.dto.response.CategoryResponse;
 import com.example.whathis.common.product.ProductStatus;
 import com.example.whathis.product.entity.Product;
+import com.example.whathis.user.dto.response.UserResponse;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
@@ -18,7 +20,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ProductDetailResponse {
-    
+
     private Long id;
     private String title;
     private String description;
@@ -32,21 +34,21 @@ public class ProductDetailResponse {
     private ProductStatus status;
     private Integer viewCount;
     private String thumbnailImageUrl;
-    private ProductResponse.SellerInfo seller;
-    private ProductResponse.CategoryInfo category;
-    private Integer inventory;  // 재고 수량
-    private Boolean isLowStock;  // 마감 임박 여부
-    private Boolean isOutOfStock;  // 품절 여부
+    private UserResponse seller;
+    private CategoryResponse category;
+    private Integer inventory; // 재고 수량
+    private Boolean isLowStock; // 마감 임박 여부
+    private Boolean isOutOfStock; // 품절 여부
     private Long likeCount;
     private Boolean isLiked;
     private Long daysLeft;
     private LocalDateTime createdAt;
-    
-    /**
-     * Entity -> DTO 변환
-     */
+
+    // Entity -> DTO 변환
     public static ProductDetailResponse from(
-        Product product, Long likeCount, Boolean isLiked
+            Product product,
+            Long likeCount,
+            Boolean isLiked
     ) {
         return ProductDetailResponse.builder()
                 .id(product.getId())
@@ -62,8 +64,8 @@ public class ProductDetailResponse {
                 .status(product.getStatus())
                 .viewCount(product.getViewCount())
                 .thumbnailImageUrl(product.getThumbnailImageUrl())
-                .seller(ProductResponse.SellerInfo.from(product.getSeller()))
-                .category(ProductResponse.CategoryInfo.from(product.getCategory()))
+                .seller(UserResponse.from(product.getSeller()))
+                .category(CategoryResponse.from(product.getCategory()))
                 .inventory(product.getInventory())
                 .isLowStock(product.isLowStock())
                 .isOutOfStock(product.isOutOfStock())
@@ -73,12 +75,13 @@ public class ProductDetailResponse {
                 .createdAt(product.getCreatedAt())
                 .build();
     }
-    
+
     // 남은 일수 계산
     private static Long calculateDaysLeft(LocalDateTime endDate) {
         if (endDate == null) {
             return null;
         }
+
         long days = ChronoUnit.DAYS.between(LocalDateTime.now(), endDate);
         return days >= 0 ? days : 0;
     }

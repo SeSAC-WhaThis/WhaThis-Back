@@ -15,12 +15,12 @@ VALUES (3, 'tester@sesac.com', '$2a$10$TestUserPasswordHashForTestingPurposesOnl
 
 -- 카테고리 샘플 데이터 --
 -- 1. 상위 카테고리 (1개)
-INSERT INTO categories (id, name, description, parent_id, created_at, updated_at)
-VALUES (1, '테크·가전', '최신 테크 & 전자기기', NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO categories (id, name, created_at, updated_at)
+VALUES (1, '테크·가전', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 -- 2. 하위 카테고리 (2개)
-INSERT INTO categories (id, name, description, parent_id, created_at, updated_at)
-VALUES (2,'스마트기기', '스마트워치, 웨어러블 등', 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-       (3, '홈가전', '주방·생활가전', 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO categories (id, name, created_at, updated_at)
+VALUES (2,'스마트기기', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+       (3, '홈가전', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
 
 -- 상품 샘플 데이터 --

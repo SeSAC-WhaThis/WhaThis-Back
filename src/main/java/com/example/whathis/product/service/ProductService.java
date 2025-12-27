@@ -28,7 +28,7 @@ public class ProductService {
     private final ProductRepository productRepository;
     private final CategoryRepository categoryRepository;
     private final ProductLikeRepository productLikeRepository;
-    private final UserRepository userRepository; // 테스트용 임시 추가
+    private final UserRepository userRepository;
 
     @Transactional
     public ProductResponse save(
@@ -121,7 +121,9 @@ public class ProductService {
     
     @Transactional
     public ProductDetailResponse update(
-        Long productId, ProductUpdateRequest request, User currentUser
+        Long productId,
+        ProductUpdateRequest request,
+        User currentUser
     ) {
         // 1. 로그인 체크
          if (currentUser == null) {
