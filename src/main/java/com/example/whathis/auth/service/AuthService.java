@@ -16,6 +16,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.UUID;
+
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -93,12 +95,13 @@ public class AuthService {
         String kakaoEmail = "kakao_" + userInfo.getId() + "@kakao.com";
         String nickname = userInfo.getKakaoAccount().getProfile().getNickname();
         String providerId = String.valueOf(userInfo.getId());
+        String randomPassword = UUID.randomUUID().toString();
 
         User user = User.builder()
                 .email(kakaoEmail)
                 .name(nickname)
                 .nickname(nickname)
-                .password(passwordEncoder.encode("KAKAO_LOGIN_" + providerId))
+                .password(passwordEncoder.encode(randomPassword))
                 .provider(AuthProvider.KAKAO)
                 .providerId(providerId)
                 .build();
