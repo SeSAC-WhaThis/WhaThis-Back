@@ -16,7 +16,7 @@ public interface FollowRepository extends JpaRepository<Follow, Long> {
     boolean existsByFollowerAndFollowing(User follower, User following);
 
     // 팔로우 취소를 위한 조회
-    Optional<Follow> findByFollowerAndFollowing(User follower, User following);
+    Optional<Follow> findByFollowerIdAndFollowingId(Long followerId, Long followingId);
 
     // 팔로워수
     long countByFollowingId(Long followingId);
@@ -31,4 +31,10 @@ public interface FollowRepository extends JpaRepository<Follow, Long> {
     // 나를 팔로우한 사용자 목록 (Followers)
     @Query("SELECT f FROM Follow f JOIN FETCH f.follower WHERE f.following.id = :followingId")
     List<Follow> findFollowersByFollowingId(@Param("followingId") Long followingId);
+
+    // 내가 팔로우한 내역 삭제
+    void deleteByFollower(User follower);
+
+    // 나를 팔로우한 내역 삭제
+    void deleteByFollowing(User following);
 }

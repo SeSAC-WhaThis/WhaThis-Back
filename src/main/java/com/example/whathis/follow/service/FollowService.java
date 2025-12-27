@@ -46,10 +46,8 @@ public class FollowService {
 
     @Transactional
     public void unfollow(User currentUser, Long targetUserId) {
-        User targetUser = userRepository.findById(targetUserId)
-                .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
 
-        Follow follow = followRepository.findByFollowerAndFollowing(currentUser, targetUser)
+        Follow follow = followRepository.findByFollowerIdAndFollowingId(currentUser.getId(), targetUserId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOLLOWING));
 
         followRepository.delete(follow);
