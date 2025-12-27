@@ -11,6 +11,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -27,14 +28,19 @@ public class Follow extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // 팔로우 하는 사람 (구매자)
+    // 팔로우 하는 사람
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "follower_id", nullable = false)
     private User follower;
 
-    // 팔로우 당하는 사람 (판매자)
+    // 팔로우 당하는 사람
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "following_id", nullable = false)
     private User following;
 
+    @Builder
+    public Follow(User follower, User following) {
+        this.follower = follower;
+        this.following = following;
+    }
 }
