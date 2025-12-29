@@ -1,6 +1,8 @@
 package com.example.whathis.product.repository;
 
 import com.example.whathis.product.entity.Product;
+import com.example.whathis.user.entity.User;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.domain.Page;
@@ -34,10 +36,11 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     Optional<Product> findByIdWithSellerAndCategory(@Param("productId") Long productId);
     
     // 판매자별 상품 조회 & N+1 방지
+    // 내가 등록한 상품 목록을 조회
     @Query("SELECT p FROM Product p " +
            "JOIN FETCH p.seller " +
            "LEFT JOIN FETCH p.category " +
            "WHERE p.seller.id = :sellerId")
-    List<Product> findBySellerIdWithCategory(@Param("sellerId") Long sellerId);
+    List<Product> findAllMyProducts(@Param("sellerId") Long sellerId);
 
 }

@@ -50,6 +50,16 @@ public class ProductController {
         return ResponseEntity.ok(ApiResponse.success(response));
     }
 
+    // 본인 등록 상품 목록 조회
+    @GetMapping("/my")
+    public ResponseEntity<ApiResponse<List<ProductResponse>>> findAllMyProducts(
+        @AuthenticationPrincipal CustomUserDetails userDetails
+    ) {
+        User currentUser = userDetails != null ? userDetails.getUser() : null;
+        List<ProductResponse> response = productService.findAllMyProducts(currentUser);
+        return ResponseEntity.ok(ApiResponse.success(response));
+    }
+
     // 상품 단일 조회
     @GetMapping("/{productId}")
     public ResponseEntity<ApiResponse<ProductDetailResponse>> findProductById(
