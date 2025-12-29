@@ -25,6 +25,7 @@ public enum ErrorCode {
     FORBIDDEN("FORBIDDEN", "권한이 없습니다"),
     ACCESS_DENIED("ACCESS_DENIED", "접근이 거부되었습니다"),
     CANNOT_SELF_LIKE("CANNOT_SELF_LIKE", "본인의 제품에는 좋아요를 누를 수 없습니다."),
+    CANNOT_SELF_FOLLOW("CANNOT_SELF_FOLLOW", "자기 자신은 팔로우할 수 없습니다."),
     
     // 404 Not Found
     NOT_FOUND("NOT_FOUND", "리소스를 찾을 수 없습니다"),
@@ -40,6 +41,7 @@ public enum ErrorCode {
     ALREADY_LIKED("ALREADY_LIKED", "이미 좋아요한 상품입니다"),
     NOT_LIKED("NOT_LIKED", "좋아요하지 않은 게시물입니다"),
     ALREADY_FOLLOWING("ALREADY_FOLLOWING", "이미 팔로우 중입니다"),
+    NOT_FOLLOWING("NOT_FOLLOWING", "팔로우하지 않은 사용자입니다"),
     OUT_OF_STOCK("OUT_OF_STOCK", "재고가 부족합니다"),
     ALREADY_REVIEWED("ALREADY_REVIEWED", "이미 리뷰를 작성한 주문입니다"),
     
