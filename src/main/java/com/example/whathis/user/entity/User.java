@@ -13,6 +13,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import com.example.whathis.auth.AuthProvider;
+
 @Entity
 @Getter
 @Table(name = "users")
@@ -45,12 +47,19 @@ public class User extends BaseEntity {
     @Setter
     private String brn;
 
+    @Column(nullable = false)
+    private AuthProvider provider = AuthProvider.LOCAL;
+
+    private String providerId;
+
     @Builder
-    public User(String email, String password, String name, String nickname) {
+    public User(String email, String password, String name, String nickname, AuthProvider provider, String providerId) {
         this.email = email;
         this.password = password;
         this.name = name;
         this.nickname = nickname;
+        this.provider = provider != null ? provider : AuthProvider.LOCAL;
+        this.providerId = providerId;
     }
 
     // 전화번호, 주소는 주문 시 배송지 정보에 입력
@@ -71,5 +80,10 @@ public class User extends BaseEntity {
     // 비밀번호 수정
     public void updatePassword(String encodedPassword) {
         this.password = encodedPassword;
+    }
+
+    public void updateOAuthProfile(String name, String profileImageUrl) {
+        if (name != null) this.name = name;
+        if (profileImageUrl != null) this.profileImageUrl = profileImageUrl;
     }
 }

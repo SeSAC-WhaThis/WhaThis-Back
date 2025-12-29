@@ -53,7 +53,9 @@ public enum ErrorCode {
     ORDER_NOT_CONFIRMED("ORDER_NOT_CONFIRMED", "주문이 확정되지 않았습니다"),
     
     // 500 Internal Server Error
-    INTERNAL_SERVER_ERROR("INTERNAL_SERVER_ERROR", "서버 오류가 발생했습니다");
+    INTERNAL_SERVER_ERROR("INTERNAL_SERVER_ERROR", "서버 오류가 발생했습니다"),
+    OAUTH_TOKEN_FAILED("OAUTH_TOKEN_FAILED", "카카오 토큰 요청에 실패했습니다"),
+    OAUTH_USER_INFO_FAILED("OAUTH_USER_INFO_FAILED", "카카오 사용자 정보 요청에 실패했습니다");
     
     private final String code;
     private final String message;
