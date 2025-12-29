@@ -4,6 +4,7 @@ import com.example.whathis.category.entity.Category;
 import com.example.whathis.category.repository.CategoryRepository;
 import com.example.whathis.common.exception.BusinessException;
 import com.example.whathis.common.exception.ErrorCode;
+import com.example.whathis.config.CustomUserDetails;
 import com.example.whathis.product.dto.request.ProductCreateRequest;
 import com.example.whathis.product.dto.request.ProductUpdateRequest;
 import com.example.whathis.product.dto.response.ProductDetailResponse;
@@ -102,6 +103,19 @@ public class ProductService {
     public List<ProductResponse> findAll() {
         // N+1 방지: seller, category를 fetch join으로 한 번에 조회
         return productRepository.findAllWithSellerAndCategory()
+                .stream()
+                .map(ProductResponse::from)
+                .collect(Collectors.toList());
+    }
+
+    // 내가 등록한 제품 전체 조회
+    public List<ProductResponse> findAllMyProducts(User currentUser) {
+        // 유저 로그인 체크
+        if (currentUser == null) {
+            throw new BusinessException(ErrorCode.UNAUTHORIZED, "로그인이 필요합니다.");
+        }
+
+        return productRepository.findAllMyProducts(currentUser.getId())
                 .stream()
                 .map(ProductResponse::from)
                 .collect(Collectors.toList());
