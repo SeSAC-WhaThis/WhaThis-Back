@@ -33,6 +33,8 @@ public class SecurityConfig {
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/auth/signup", "/auth/login", "/auth/kakao").permitAll()
+                        .requestMatchers("/products/**").permitAll()    // Product API 허용 (테스트용)
+                        .requestMatchers("/categories/**").permitAll()  // Category API 허용 (테스트용)
                         .anyRequest().authenticated())
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class
                 );
