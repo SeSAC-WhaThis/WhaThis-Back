@@ -35,6 +35,7 @@ public class SecurityConfig {
                         .requestMatchers("/auth/signup", "/auth/login", "/auth/kakao").permitAll()
                         .requestMatchers("/products/**").permitAll()    // Product API 허용 (테스트용)
                         .requestMatchers("/categories/**").permitAll()  // Category API 허용 (테스트용)
+                        .requestMatchers("/users/profile/{userId}").permitAll()
                         .anyRequest().authenticated())
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class
                 );
