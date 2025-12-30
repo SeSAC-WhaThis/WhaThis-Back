@@ -4,7 +4,6 @@ import com.example.whathis.category.entity.Category;
 import com.example.whathis.category.repository.CategoryRepository;
 import com.example.whathis.common.exception.BusinessException;
 import com.example.whathis.common.exception.ErrorCode;
-import com.example.whathis.config.CustomUserDetails;
 import com.example.whathis.product.dto.request.ProductCreateRequest;
 import com.example.whathis.product.dto.request.ProductUpdateRequest;
 import com.example.whathis.product.dto.response.ProductDetailResponse;
@@ -32,7 +31,7 @@ public class ProductService {
     private final UserRepository userRepository;
 
     @Transactional
-    public ProductResponse save(
+    public ProductDetailResponse save(
             ProductCreateRequest request,
             User currentUser
     ) {
@@ -44,9 +43,9 @@ public class ProductService {
         // 2. 사업자등록번호 체크 & 저장 (최초 상품 등록 시에만)
         if (currentUser.getBrn() == null) {
             // 최초 상품 등록 시 사업자등록번호가 필수
-             if (request.getBrn() == null || request.getBrn().isBlank()) {
-             throw new BusinessException(ErrorCode.INVALID_INPUT, "사업자등록번호는 필수입니다.");
-             }
+            if (request.getBrn() == null || request.getBrn().isBlank()) {
+                throw new BusinessException(ErrorCode.INVALID_INPUT, "사업자등록번호는 필수입니다.");
+            }
             // 사업자등록번호를 User에 저장
             currentUser.setBrn(request.getBrn());
             userRepository.save(currentUser); // User 업데이트
@@ -67,8 +66,8 @@ public class ProductService {
         // 6. Product 저장
         Product savedProduct = productRepository.save(product);
 
-        // 7. ProductResponse 반환
-        return ProductResponse.from(savedProduct);
+        // 7. ProductDetailResponse 반환 (생성 시 좋아요 0, 좋아요 여부 false)
+        return ProductDetailResponse.from(savedProduct, 0L, false);
     }
 
     // 상품 날짜 검증
@@ -179,9 +178,8 @@ public class ProductService {
 
     @Transactional
     public void delete(
-        Long productId,
-        User currentUser
-    ) {
+            Long productId,
+            User currentUser) {
         // 1. 로그인 체크
         if (currentUser == null) {
             throw new BusinessException(ErrorCode.UNAUTHORIZED, "로그인이 필요합니다.");
@@ -208,8 +206,7 @@ public class ProductService {
     private ProductDetailResponse getDetailInternal(
             Long productId,
             User currentUser,
-            boolean increaseViewCount
-    ) {
+            boolean increaseViewCount) {
         // 1. Product 조회 (N+1 방지: seller, category fetch join)
         Product foundProduct = productRepository.findByIdWithSellerAndCategory(productId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.PRODUCT_NOT_FOUND));

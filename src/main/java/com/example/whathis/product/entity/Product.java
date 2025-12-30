@@ -98,9 +98,10 @@ public class Product extends BaseEntity {
 
     @Builder
     private Product(
-            String title, String description, User seller, Category category,
-            BigDecimal price, BigDecimal goalAmount, LocalDateTime startDate,
-            LocalDateTime endDate, String thumbnailImageUrl, String storyImageUrl, Integer inventory) {
+        String title, String description, User seller, Category category,
+        BigDecimal price, BigDecimal goalAmount, LocalDateTime startDate,
+        LocalDateTime endDate, String thumbnailImageUrl, String storyImageUrl, Integer inventory
+    ) {
         this.title = title;
         this.description = description;
         this.seller = seller;
@@ -120,9 +121,10 @@ public class Product extends BaseEntity {
 
     // ProductCreateRequest DTO 객체로부터 Product 엔티티 생성
     public static Product of(
-            ProductCreateRequest request,
-            User seller,
-            Category category) {
+        ProductCreateRequest request,
+        User seller,
+        Category category
+    ) {
         return Product.builder()
                 .title(request.getTitle())
                 .description(request.getDescription())
@@ -174,8 +176,9 @@ public class Product extends BaseEntity {
 
     // 상품 정보 수정 (선택적 업데이트)
     public void update(
-            String title, String description, Category category,
-            LocalDateTime endDate, String thumbnailImageUrl, String storyImageUrl) {
+        String title, String description, Category category,
+        LocalDateTime endDate, String thumbnailImageUrl, String storyImageUrl
+    ) {
         if (title != null && !title.isBlank()) {
             this.title = title;
         }
