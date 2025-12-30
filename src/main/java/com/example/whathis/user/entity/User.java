@@ -2,12 +2,7 @@ package com.example.whathis.user.entity;
 
 import com.example.whathis.BaseEntity;
 import com.example.whathis.auth.dto.request.UserUpdateRequest;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -47,6 +42,7 @@ public class User extends BaseEntity {
     @Setter
     private String brn;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private AuthProvider provider = AuthProvider.LOCAL;
 
