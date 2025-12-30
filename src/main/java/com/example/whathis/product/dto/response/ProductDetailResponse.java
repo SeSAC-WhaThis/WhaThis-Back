@@ -34,6 +34,7 @@ public class ProductDetailResponse {
     private ProductStatus status;
     private Integer viewCount;
     private String thumbnailImageUrl;
+    private String storyImageUrl;
     private UserResponse seller;
     private CategoryResponse category;
     private Integer inventory; // 재고 수량
@@ -64,6 +65,7 @@ public class ProductDetailResponse {
                 .status(product.getStatus())
                 .viewCount(product.getViewCount())
                 .thumbnailImageUrl(product.getThumbnailImageUrl())
+                .storyImageUrl(product.getStoryImageUrl())
                 .seller(UserResponse.from(product.getSeller()))
                 .category(CategoryResponse.from(product.getCategory()))
                 .inventory(product.getInventory())

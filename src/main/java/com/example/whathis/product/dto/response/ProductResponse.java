@@ -31,6 +31,7 @@ public class ProductResponse {
     private ProductStatus status;
     private Integer viewCount;
     private String thumbnailImageUrl;
+    private String storyImageUrl;
     private UserResponse seller;
     private CategoryResponse category;
     private Long daysLeft;
@@ -51,6 +52,7 @@ public class ProductResponse {
                 .status(product.getStatus())
                 .viewCount(product.getViewCount())
                 .thumbnailImageUrl(product.getThumbnailImageUrl())
+                .storyImageUrl(product.getStoryImageUrl())
                 .seller(UserResponse.from(product.getSeller()))
                 .category(CategoryResponse.from(product.getCategory()))
                 .daysLeft(calculateDaysLeft(product.getEndDate()))

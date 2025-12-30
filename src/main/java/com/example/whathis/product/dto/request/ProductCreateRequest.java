@@ -32,6 +32,13 @@ public class ProductCreateRequest {
         message = "이미지 URL(jpg, jpeg, png, webp) 형식이어야 합니다."
     )
     private String thumbnailImageUrl;
+
+    @NotBlank(message = "제품 사진은 필수입니다.")
+    @Pattern(
+        regexp = "^(https?://.*\\.(png|jpg|jpeg|webp))$",
+        message = "이미지 URL(jpg, jpeg, png, webp) 형식이어야 합니다."
+    )
+    private String storyImageUrl;
     
     @NotBlank(message = "제목은 필수입니다.")
     @Size(max = 40, message = "제목은 40자 이내로 입력해야 합니다.")
