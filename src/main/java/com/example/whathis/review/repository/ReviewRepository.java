@@ -28,4 +28,7 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
            "ORDER BY r.createdAt DESC")
     List<Review> findAllByProductIdWithUserAndOrder(@Param("productId") Long productId);
 
+    // 특정 사용자의 판매 상품에 대한 리뷰 평균 별점 조회
+    @Query("SELECT AVG(r.star) FROM Review r WHERE r.product.seller.id = :sellerId")
+    Double findRatingAvgBySellerId(@Param("sellerId") Long sellerId);
 }

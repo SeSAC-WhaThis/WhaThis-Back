@@ -1,6 +1,10 @@
 package com.example.whathis.product.repository;
 
+import com.example.whathis.common.product.ProductStatus;
 import com.example.whathis.product.entity.Product;
+import com.example.whathis.user.entity.User;
+import java.math.BigDecimal;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.domain.Page;
@@ -42,4 +46,11 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
            "WHERE p.seller.id = :sellerId")
     List<Product> findAllMyProducts(@Param("sellerId") Long sellerId);
 
+    // 특정 사용자의 총 누적 판매 금액 조회
+    @Query("SELECT SUM(p.currentAmount) FROM Product p WHERE p.seller.id = :sellerId AND p.status = :status")
+    BigDecimal sumSalesTotalBySellerId(@Param("sellerId") Long sellerId, @Param("status") ProductStatus status);
+
+    // 특정 사용자의 진행 중인 상품 목록 조회
+    @Query("SELECT p FROM Product p JOIN FETCH p.seller LEFT JOIN FETCH p.category WHERE p.seller.id = :sellerId AND p.status = :status ORDER BY p.startDate DESC")
+    List<Product> findProductsBySellerAndStatus(@Param("sellerId") Long sellerId, @Param("status") ProductStatus status);
 }
