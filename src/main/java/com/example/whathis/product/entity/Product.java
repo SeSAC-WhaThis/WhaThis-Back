@@ -92,11 +92,15 @@ public class Product extends BaseEntity {
     @Column(nullable = false)
     private String thumbnailImageUrl;
 
+    // 스토리 이미지 (상세 페이지에서 보여줄 이미지)
+    @Column(nullable = false)
+    private String storyImageUrl;
+
     @Builder
     private Product(
         String title, String description, User seller, Category category,
         BigDecimal price, BigDecimal goalAmount, LocalDateTime startDate,
-        LocalDateTime endDate, String thumbnailImageUrl, Integer inventory
+        LocalDateTime endDate, String thumbnailImageUrl, String storyImageUrl, Integer inventory
     ) {
         this.title = title;
         this.description = description;
@@ -107,6 +111,7 @@ public class Product extends BaseEntity {
         this.startDate = startDate;
         this.endDate = endDate;
         this.thumbnailImageUrl = thumbnailImageUrl;
+        this.storyImageUrl = storyImageUrl;
         this.inventory = inventory;
         this.status = ProductStatus.PREPARING;
         this.currentAmount = BigDecimal.ZERO;
@@ -130,23 +135,24 @@ public class Product extends BaseEntity {
                 .startDate(request.getStartDate())
                 .endDate(request.getEndDate())
                 .thumbnailImageUrl(request.getThumbnailImageUrl())
+                .storyImageUrl(request.getStoryImageUrl())
                 .inventory(request.getInventory())
                 .build();
     }
-    
+
     // ========== 아래부터는 비즈니스 메서드 ==========
-    
+
     // 조회수 증가
     public void increaseViewCount() {
         this.viewCount++;
     }
-    
+
     // 펀딩 참여 (currentAmount, buyerCount 증가)
     public void participate(BigDecimal amount) {
         this.currentAmount = this.currentAmount.add(amount);
         this.buyerCount++;
     }
-    
+
     // 달성률 계산
     public double getAchievementRate() {
         if (goalAmount.compareTo(BigDecimal.ZERO) == 0) {
@@ -157,21 +163,21 @@ public class Product extends BaseEntity {
                 .multiply(BigDecimal.valueOf(100))
                 .doubleValue();
     }
-    
+
     // 펀딩 진행 중인지 확인
     public boolean isOngoing() {
         return status == ProductStatus.ONGOING;
     }
-    
+
     // 펀딩 성공 여부 확인
     public boolean isSuccess() {
         return currentAmount.compareTo(goalAmount) >= 0;
     }
-    
+
     // 상품 정보 수정 (선택적 업데이트)
     public void update(
         String title, String description, Category category,
-        LocalDateTime endDate, String thumbnailImageUrl
+        LocalDateTime endDate, String thumbnailImageUrl, String storyImageUrl
     ) {
         if (title != null && !title.isBlank()) {
             this.title = title;
@@ -189,8 +195,7 @@ public class Product extends BaseEntity {
             // 종료일은 연장만 가능 (단축 불가)
             if (endDate.isBefore(this.endDate)) {
                 throw new IllegalArgumentException(
-                    "종료일은 연장만 가능합니다. 현재 종료일: " + this.endDate
-                );
+                        "종료일은 연장만 가능합니다. 현재 종료일: " + this.endDate);
             }
             this.endDate = endDate;
         }
@@ -198,13 +203,17 @@ public class Product extends BaseEntity {
         if (thumbnailImageUrl != null) {
             this.thumbnailImageUrl = thumbnailImageUrl;
         }
+
+        if (storyImageUrl != null) {
+            this.storyImageUrl = storyImageUrl;
+        }
     }
-    
+
     // 판매자 확인
     public boolean isOwnedBy(User user) {
         return this.seller.getId().equals(user.getId());
     }
-    
+
     // 재고 감소 (펀딩 참여 시)
     public void decreaseInventory(int quantity) {
         if (this.inventory < quantity) {
@@ -212,22 +221,22 @@ public class Product extends BaseEntity {
         }
         this.inventory -= quantity;
     }
-    
+
     // 재고 증가 (펀딩 취소 시)
     public void increaseInventory(int quantity) {
         this.inventory += quantity;
     }
-    
+
     // 재고 확인
     public boolean hasStock(int quantity) {
         return this.inventory >= quantity;
     }
-    
+
     // 품절 여부
     public boolean isOutOfStock() {
         return this.inventory <= 0;
     }
-    
+
     // 마감 임박 여부 (재고 10개 이하)
     public boolean isLowStock() {
         return this.inventory > 0 && this.inventory <= 10;

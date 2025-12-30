@@ -33,12 +33,12 @@ public class ProductController {
     private final ProductLikeService productLikeService;
 
     @PostMapping
-    public ResponseEntity<ApiResponse<ProductResponse>> saveProduct(
+    public ResponseEntity<ApiResponse<ProductDetailResponse>> saveProduct(
         @Valid @RequestBody ProductCreateRequest request,
         @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
         User currentUser = userDetails != null ? userDetails.getUser() : null;
-        ProductResponse response = productService.save(request, currentUser);
+        ProductDetailResponse response = productService.save(request, currentUser);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(ApiResponse.success(response, "제품이 성공적으로 등록되었습니다."));
     }

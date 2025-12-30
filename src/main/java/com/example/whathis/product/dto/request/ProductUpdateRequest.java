@@ -16,7 +16,7 @@ public class ProductUpdateRequest {
     private String title;
 
     private String description;
-    
+
     // 종료일 (연장만 가능)
     private LocalDateTime endDate;
 
@@ -24,7 +24,9 @@ public class ProductUpdateRequest {
     private Long categoryId;
 
     private String thumbnailImageUrl;
-    
+
+    private String storyImageUrl;
+
     // ===== 수정 가능 여부 체크 =====
     // 제목이 있는가?
     public boolean hasTitle() {
@@ -49,6 +51,11 @@ public class ProductUpdateRequest {
     // 썸네일 이미지가 있는가?
     public boolean hasThumbnailImageUrl() {
         return thumbnailImageUrl != null;
+    }
+
+    // 스토리 이미지가 있는가?
+    public boolean hasStoryImageUrl() {
+        return storyImageUrl != null;
     }
 
 }
