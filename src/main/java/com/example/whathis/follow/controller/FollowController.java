@@ -58,7 +58,7 @@ public class FollowController {
     }
 
     @GetMapping("/products")
-    public ResponseEntity<ApiResponse<List<ProductResponse>>> getFollwerProducts(
+    public ResponseEntity<ApiResponse<List<ProductResponse>>> getFollowerProducts(
             @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
         List<ProductResponse> response = followService.getProductByFollowerId(userDetails.getUser());
