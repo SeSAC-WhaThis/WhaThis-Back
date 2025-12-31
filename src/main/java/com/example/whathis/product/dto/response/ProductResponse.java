@@ -1,7 +1,6 @@
 package com.example.whathis.product.dto.response;
 
 import com.example.whathis.category.dto.response.CategoryResponse;
-import com.example.whathis.common.product.ProductStatus;
 import com.example.whathis.product.entity.Product;
 import com.example.whathis.user.dto.response.UserResponse;
 import java.math.BigDecimal;
@@ -28,7 +27,6 @@ public class ProductResponse {
     private Double achievementRate;
     private LocalDateTime startDate;
     private LocalDateTime endDate;
-    private ProductStatus status;
     private Integer viewCount;
     private String thumbnailImageUrl;
     private UserResponse seller;
@@ -48,7 +46,6 @@ public class ProductResponse {
                 .achievementRate(product.getAchievementRate())
                 .startDate(product.getStartDate())
                 .endDate(product.getEndDate())
-                .status(product.getStatus())
                 .viewCount(product.getViewCount())
                 .thumbnailImageUrl(product.getThumbnailImageUrl())
                 .seller(UserResponse.from(product.getSeller()))

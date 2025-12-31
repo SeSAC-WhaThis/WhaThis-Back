@@ -2,13 +2,10 @@ package com.example.whathis.product.entity;
 
 import com.example.whathis.BaseEntity;
 import com.example.whathis.category.entity.Category;
-import com.example.whathis.common.product.ProductStatus;
 import com.example.whathis.product.dto.request.ProductCreateRequest;
 import com.example.whathis.user.entity.User;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -79,11 +76,6 @@ public class Product extends BaseEntity {
     @Column(nullable = false)
     private LocalDateTime endDate;
 
-    // 상품에 대한 펀딩 상태
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private ProductStatus status = ProductStatus.PREPARING;
-
     // 조회 수
     @Column(nullable = false)
     private Integer viewCount = 0;
@@ -113,7 +105,7 @@ public class Product extends BaseEntity {
         this.thumbnailImageUrl = thumbnailImageUrl;
         this.storyImageUrl = storyImageUrl;
         this.inventory = inventory;
-        this.status = ProductStatus.PREPARING;
+
         this.currentAmount = BigDecimal.ZERO;
         this.buyerCount = 0;
         this.viewCount = 0;
@@ -164,11 +156,6 @@ public class Product extends BaseEntity {
                 .doubleValue();
     }
 
-    // 펀딩 진행 중인지 확인
-    public boolean isOngoing() {
-        return status == ProductStatus.ONGOING;
-    }
-
     // 펀딩 성공 여부 확인
     public boolean isSuccess() {
         return currentAmount.compareTo(goalAmount) >= 0;
@@ -194,8 +181,7 @@ public class Product extends BaseEntity {
         if (endDate != null) {
             // 종료일은 연장만 가능 (단축 불가)
             if (endDate.isBefore(this.endDate)) {
-                throw new IllegalArgumentException(
-                        "종료일은 연장만 가능합니다. 현재 종료일: " + this.endDate);
+                throw new IllegalArgumentException("종료일은 연장만 가능합니다. 현재 종료일: " + this.endDate);
             }
             this.endDate = endDate;
         }
