@@ -7,7 +7,9 @@ import com.example.whathis.auth.dto.request.LoginRequest;
 import com.example.whathis.auth.dto.request.SignupRequest;
 import com.example.whathis.auth.dto.response.TokenResponse;
 import com.example.whathis.config.CustomUserDetails;
+import com.example.whathis.product.dto.response.UserProfileResponse;
 import com.example.whathis.user.dto.response.UserResponse;
+import com.example.whathis.user.entity.User;
 import com.example.whathis.user.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -57,5 +59,15 @@ public class UserController {
     ) {
         userService.deleteUser(userDetails.getUser());
         return ResponseEntity.ok(ApiResponse.successWithMessage("회원 탈퇴가 완료되었습니다."));
+    }
+
+    @GetMapping("/profile/{sellerId}")
+    public ResponseEntity<ApiResponse<UserProfileResponse>> getSellerProfile(
+            @PathVariable Long sellerId,
+            @AuthenticationPrincipal CustomUserDetails userDetails
+    ) {
+        User currentUser = userDetails != null ? userDetails.getUser() : null;
+        UserProfileResponse response = userService.getUserProfile(sellerId, currentUser);
+        return ResponseEntity.ok(ApiResponse.success(response));
     }
 }
