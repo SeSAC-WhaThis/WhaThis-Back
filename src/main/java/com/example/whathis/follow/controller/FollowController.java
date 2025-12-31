@@ -4,10 +4,15 @@ import com.example.whathis.common.response.ApiResponse;
 import com.example.whathis.config.CustomUserDetails;
 import com.example.whathis.follow.dto.response.FollowListResponse;
 import com.example.whathis.follow.service.FollowService;
+import com.example.whathis.product.dto.response.ProductResponse;
+import com.example.whathis.product.service.ProductService;
 import lombok.RequiredArgsConstructor;
+import org.apache.coyote.Response;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -49,6 +54,14 @@ public class FollowController {
             @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
         FollowListResponse response = followService.getFollowers(userDetails.getUser());
+        return ResponseEntity.ok(ApiResponse.success(response));
+    }
+
+    @GetMapping("/products")
+    public ResponseEntity<ApiResponse<List<ProductResponse>>> getFollowerProducts(
+            @AuthenticationPrincipal CustomUserDetails userDetails
+    ) {
+        List<ProductResponse> response = followService.getProductByFollowerId(userDetails.getUser());
         return ResponseEntity.ok(ApiResponse.success(response));
     }
 }

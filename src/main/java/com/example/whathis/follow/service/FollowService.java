@@ -6,6 +6,9 @@ import com.example.whathis.follow.dto.response.FollowListResponse;
 import com.example.whathis.follow.dto.response.FollowUserResponse;
 import com.example.whathis.follow.entity.Follow;
 import com.example.whathis.follow.repository.FollowRepository;
+import com.example.whathis.product.dto.response.ProductResponse;
+import com.example.whathis.product.entity.Product;
+import com.example.whathis.product.repository.ProductRepository;
 import com.example.whathis.user.entity.User;
 import com.example.whathis.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +25,7 @@ public class FollowService {
 
     private final FollowRepository followRepository;
     private final UserRepository userRepository;
+    private final ProductRepository productRepository;
 
     @Transactional
     public void follow(User currentUser, Long targetUserId) {
@@ -71,4 +75,10 @@ public class FollowService {
         return FollowListResponse.of(list);
     }
 
+    public List<ProductResponse> getProductByFollowerId(User currentUser) {
+        return productRepository.findProductsByFollowerId(currentUser.getId())
+                .stream()
+                .map(ProductResponse::from)
+                .collect(Collectors.toList());
+    }
 }

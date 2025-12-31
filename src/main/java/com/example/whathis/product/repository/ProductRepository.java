@@ -74,4 +74,15 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
            "WHERE p.category.id = :categoryId")
     List<Product> findAllByCategoryId(@Param("categoryId") Long categoryId);
 
+    // 사용자가 팔로우한 판매자들의 진행 중인 상품들 조회
+    @Query("SELECT p FROM Product p " +
+            "JOIN FETCH p.seller " +
+            "LEFT JOIN FETCH p.category " +
+            "WHERE p.seller.id IN (" +
+            "SELECT f.following.id FROM Follow f " +
+            "WHERE f.follower.id = :followerId" +
+            ") AND p.startDate <= CURRENT_TIMESTAMP " +
+            "AND p.endDate > CURRENT_TIMESTAMP " +
+            "ORDER BY p.createdAt DESC")
+    List<Product> findProductsByFollowerId(@Param("followerId") Long followerId);
 }
