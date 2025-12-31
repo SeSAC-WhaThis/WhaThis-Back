@@ -66,4 +66,12 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
             "AND p.endDate > CURRENT_TIMESTAMP " +
             "ORDER BY p.startDate DESC")
     List<Product> findProductsBySellerAndStatus(@Param("sellerId") Long sellerId);
+  
+    // 카테고리별 상품 조회 & N+1 방지
+    @Query("SELECT p FROM Product p " +
+           "JOIN FETCH p.seller " +
+           "LEFT JOIN FETCH p.category " +
+           "WHERE p.category.id = :categoryId")
+    List<Product> findAllByCategoryId(@Param("categoryId") Long categoryId);
+
 }
