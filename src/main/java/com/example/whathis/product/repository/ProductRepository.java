@@ -1,6 +1,5 @@
 package com.example.whathis.product.repository;
 
-import com.example.whathis.common.product.ProductStatus;
 import com.example.whathis.product.entity.Product;
 import com.example.whathis.user.entity.User;
 import java.math.BigDecimal;
@@ -47,17 +46,24 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     List<Product> findAllMyProducts(@Param("sellerId") Long sellerId);
 
     // 특정 사용자의 총 누적 판매 금액 조회
+    // 성공으로 종료된 상품의 누적 판매 금액이므로 endDate(판매 종료일)가 현재보다 과거여야하고,
+    // 현재 모금액이 목표 모금액 이상이어야 함
     @Query("SELECT SUM(p.currentAmount) " +
             "FROM Product p " +
             "WHERE p.seller.id = :sellerId " +
-            "AND p.status = :status")
-    BigDecimal sumSalesTotalBySellerId(@Param("sellerId") Long sellerId, @Param("status") ProductStatus status);
+            "AND p.endDate < CURRENT_TIMESTAMP " +
+            "AND p.currentAmount >= p.goalAmount")
+    BigDecimal sumSalesTotalBySellerId(@Param("sellerId") Long sellerId);
 
     // 특정 사용자의 진행 중인 상품 목록 조회
+    // startDate(시작일)는 지났고 endDate(종료일)은 지나지 않은 상품
     @Query("SELECT p " +
-            "FROM Product p JOIN FETCH p.seller LEFT JOIN FETCH p.category " +
+            "FROM Product p " +
+            "JOIN FETCH p.seller " +
+            "LEFT JOIN FETCH p.category " +
             "WHERE p.seller.id = :sellerId " +
-            "AND p.status = :status " +
+            "AND p.startDate <= CURRENT_TIMESTAMP " +
+            "AND p.endDate > CURRENT_TIMESTAMP " +
             "ORDER BY p.startDate DESC")
-    List<Product> findProductsBySellerAndStatus(@Param("sellerId") Long sellerId, @Param("status") ProductStatus status);
+    List<Product> findProductsBySellerAndStatus(@Param("sellerId") Long sellerId);
 }

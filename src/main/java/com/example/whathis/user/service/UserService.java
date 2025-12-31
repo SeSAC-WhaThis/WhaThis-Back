@@ -4,7 +4,6 @@ import com.example.whathis.auth.dto.request.PasswordUpdateRequest;
 import com.example.whathis.auth.dto.request.UserUpdateRequest;
 import com.example.whathis.common.exception.BusinessException;
 import com.example.whathis.common.exception.ErrorCode;
-import com.example.whathis.common.product.ProductStatus;
 import com.example.whathis.config.JwtProvider;
 import com.example.whathis.auth.dto.request.LoginRequest;
 import com.example.whathis.auth.dto.request.SignupRequest;
@@ -110,13 +109,13 @@ public class UserService {
         }
 
         // 성공으로 종료된 상품들에 대한 누적 판매 금액
-        BigDecimal salesTotalAmount = productRepository.sumSalesTotalBySellerId(sellerId, ProductStatus.SUCCESS);
+        BigDecimal salesTotalAmount = productRepository.sumSalesTotalBySellerId(sellerId);
         if(salesTotalAmount == null) {
             salesTotalAmount = BigDecimal.ZERO;
         }
 
         // 진행 중인 상품 목록
-        List<Product> products = productRepository.findProductsBySellerAndStatus(sellerId, ProductStatus.ONGOING);
+        List<Product> products = productRepository.findProductsBySellerAndStatus(sellerId);
         List<ProductResponse> productResponses = products.stream()
                 .map(ProductResponse::from)
                 .collect(Collectors.toList());
