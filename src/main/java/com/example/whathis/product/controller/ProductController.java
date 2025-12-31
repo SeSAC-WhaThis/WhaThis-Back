@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -43,10 +44,12 @@ public class ProductController {
                 .body(ApiResponse.success(response, "제품이 성공적으로 등록되었습니다."));
     }
 
-    // 상품 목록 조회
+    // 상품 목록 조회 (필터링: categoryId)
     @GetMapping
-    public ResponseEntity<ApiResponse<List<ProductResponse>>> findAllProducts() {
-        List<ProductResponse> response = productService.findAll();
+    public ResponseEntity<ApiResponse<List<ProductResponse>>> findAllProducts(
+        @RequestParam(required = false) Long categoryId
+    ) {
+        List<ProductResponse> response = productService.findAll(categoryId);
         return ResponseEntity.ok(ApiResponse.success(response));
     }
 

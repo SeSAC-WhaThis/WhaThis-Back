@@ -98,11 +98,18 @@ public class ProductService {
         }
     }
 
-    // 제품 전체 조회
-    public List<ProductResponse> findAll() {
-        // N+1 방지: seller, category를 fetch join으로 한 번에 조회
-        return productRepository.findAllWithSellerAndCategory()
-                .stream()
+    // 제품 전체 조회 (또는 카테고리별 조회)
+    public List<ProductResponse> findAll(Long categoryId) {
+        // categoryId가 있으면 카테고리별 조회, 없으면 전체 조회
+        List<Product> products;
+        if (categoryId != null) {
+            products = productRepository.findAllByCategoryId(categoryId);
+        } else {
+            // N+1 방지: seller, category를 fetch join으로 한 번에 조회
+            products = productRepository.findAllWithSellerAndCategory();
+        }
+
+        return products.stream()
                 .map(ProductResponse::from)
                 .collect(Collectors.toList());
     }
@@ -128,7 +135,10 @@ public class ProductService {
 
     // 제품 상세 조회 (제품 정보 수정, 좋아요 요청 시 사용)
     // 제품 정보 수정, 좋아요, 좋아요 취소 -> 조회수가 증가하지 않아야 함.
-    public ProductDetailResponse getDetail(Long productId, User currentUser) {
+    public ProductDetailResponse getDetail(
+        Long productId,
+        User currentUser
+    ) {
         return getDetailInternal(productId, currentUser, false);
     }
 
@@ -200,9 +210,10 @@ public class ProductService {
     }
 
     private ProductDetailResponse getDetailInternal(
-            Long productId,
-            User currentUser,
-            boolean increaseViewCount) {
+        Long productId,
+        User currentUser,
+        boolean increaseViewCount
+    ) {
         // 1. Product 조회 (N+1 방지: seller, category fetch join)
         Product foundProduct = productRepository.findByIdWithSellerAndCategory(productId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.PRODUCT_NOT_FOUND));
