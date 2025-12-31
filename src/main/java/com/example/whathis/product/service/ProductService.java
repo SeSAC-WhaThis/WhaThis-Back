@@ -32,8 +32,8 @@ public class ProductService {
 
     @Transactional
     public ProductDetailResponse save(
-            ProductCreateRequest request,
-            User currentUser
+        ProductCreateRequest request,
+        User currentUser
     ) {
         // 1. 유저 로그인 체크
         if (currentUser == null) {
@@ -72,8 +72,8 @@ public class ProductService {
 
     // 상품 날짜 검증
     private void validateProductDates(
-            LocalDateTime startDate,
-            LocalDateTime endDate
+        LocalDateTime startDate,
+        LocalDateTime endDate
     ) {
         LocalDateTime now = LocalDateTime.now();
 
@@ -134,9 +134,9 @@ public class ProductService {
 
     @Transactional
     public ProductDetailResponse update(
-            Long productId,
-            ProductUpdateRequest request,
-            User currentUser
+        Long productId,
+        ProductUpdateRequest request,
+        User currentUser
     ) {
         // 1. 로그인 체크
         if (currentUser == null) {
@@ -178,8 +178,9 @@ public class ProductService {
 
     @Transactional
     public void delete(
-            Long productId,
-            User currentUser) {
+        Long productId,
+        User currentUser
+    ) {
         // 1. 로그인 체크
         if (currentUser == null) {
             throw new BusinessException(ErrorCode.UNAUTHORIZED, "로그인이 필요합니다.");
@@ -192,11 +193,6 @@ public class ProductService {
         // 3. 권한 확인
         if (!foundProduct.isOwnedBy(currentUser)) {
             throw new BusinessException(ErrorCode.FORBIDDEN, "본인의 상품만 삭제할 수 있습니다");
-        }
-
-        // 4. 펀딩 진행 중이면 삭제 불가
-        if (foundProduct.isOngoing()) {
-            throw new BusinessException(ErrorCode.INVALID_INPUT, "진행 중인 펀딩은 삭제할 수 없습니다");
         }
 
         // 5. 삭제

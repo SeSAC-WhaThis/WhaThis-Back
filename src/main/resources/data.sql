@@ -31,18 +31,18 @@ INSERT INTO categories (id, name, created_at, updated_at) VALUES
 
 -- 상품 샘플 데이터 (카테고리 ID 매핑 수정) --
 -- Product 1: 스마트워치 -> 테크·가전 (ID: 1)
-INSERT INTO products (id, title, description, seller_id, category_id, price, inventory, goal_amount, current_amount, buyer_count, start_date, end_date, status, view_count, thumbnail_image_url, story_image_url, created_at, updated_at)
+INSERT INTO products (id, title, description, seller_id, category_id, price, inventory, goal_amount, current_amount, buyer_count, start_date, end_date, view_count, thumbnail_image_url, story_image_url, created_at, updated_at)
 VALUES (1, '혁신적인 스마트워치 Pro', '건강 모니터링과 스마트 기능이 결합된 차세대 스마트워치입니다. 심박수, 혈압, 수면 패턴을 실시간으로 모니터링하고 50m 방수 기능을 지원합니다.',
         1, 1, 150000, 100, 10000000, 7500000, 50,
         DATE_SUB(CURRENT_TIMESTAMP, INTERVAL 10 DAY), DATE_ADD(CURRENT_TIMESTAMP, INTERVAL 20 DAY),
-        'ONGOING', 1251, 'https://example.com/smartwatch-pro.jpg', 'https://example.com/smartwatch-pro-story.jpg', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+        1251, 'https://example.com/smartwatch-pro.jpg', 'https://example.com/smartwatch-pro-story.jpg', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
 -- Product 2: 블렌더 -> 홈·리빙 (ID: 5)
-INSERT INTO products (id, title, description, seller_id, category_id, price, inventory, goal_amount, current_amount, buyer_count, start_date, end_date, status, view_count, thumbnail_image_url, story_image_url, created_at, updated_at)
+INSERT INTO products (id, title, description, seller_id, category_id, price, inventory, goal_amount, current_amount, buyer_count, start_date, end_date, view_count, thumbnail_image_url, story_image_url, created_at, updated_at)
 VALUES (2, '프리미엄 무선 블렌더', '강력한 모터와 스테인레스 날로 어떤 재료도 부드럽게 갈아냅니다. USB 충전식으로 어디서나 사용 가능하며, 500ml 대용량 용기를 제공합니다.',
         1, 5, 89000, 200, 5000000, 4200000, 48,
         DATE_SUB(CURRENT_TIMESTAMP, INTERVAL 5 DAY), DATE_ADD(CURRENT_TIMESTAMP, INTERVAL 15 DAY),
-        'ONGOING', 856, 'https://example.com/blender.jpg', 'https://example.com/blender-story.jpg', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+        856, 'https://example.com/blender.jpg', 'https://example.com/blender-story.jpg', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
 
 -- 주문 샘플 데이터 (Review 작성용) --
