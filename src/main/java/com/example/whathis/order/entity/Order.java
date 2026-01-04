@@ -82,10 +82,23 @@ public class Order extends BaseEntity {
         }
     }
 
+    @Column(nullable = false)
+    private String receiverName;
+
+    @Column(nullable = false)
+    private String receiverPhone;
+
+    @Column(nullable = false)
+    private String receiverAddress;
+
+    @Column
+    private String request;
+
     @Builder
     public Order(
         User buyer, Product product, Integer quantity, BigDecimal totalAmount,
-        OrderStatus status, LocalDateTime reservedPaymentDate, LocalDateTime confirmedAt
+        OrderStatus status, LocalDateTime reservedPaymentDate, LocalDateTime confirmedAt,
+        String  receiverName, String receiverPhone, String receiverAddress, String request
     ) {
         this.buyer = buyer;
         this.product = product;
@@ -94,6 +107,15 @@ public class Order extends BaseEntity {
         this.status = status != null ? status : OrderStatus.PENDING;
         this.reservedPaymentDate = reservedPaymentDate;
         this.confirmedAt = confirmedAt;
+        this.receiverName = receiverName;
+        this.receiverPhone = receiverPhone;
+        this.receiverAddress = receiverAddress;
+        this.request = request;
     }
 
+    // 주문 상태 예약으로 변경
+    public void confirmOrder() {
+        this.status = OrderStatus.RESERVED; // 펀딩은 '예약' 상태가 됨
+        this.confirmedAt = LocalDateTime.now();
+    }
 }
