@@ -90,10 +90,9 @@ public class Product extends BaseEntity {
 
     @Builder
     private Product(
-        String title, String description, User seller, Category category,
-        BigDecimal price, BigDecimal goalAmount, LocalDateTime startDate,
-        LocalDateTime endDate, String thumbnailImageUrl, String storyImageUrl, Integer inventory
-    ) {
+            String title, String description, User seller, Category category,
+            BigDecimal price, BigDecimal goalAmount, LocalDateTime startDate,
+            LocalDateTime endDate, String thumbnailImageUrl, String storyImageUrl, Integer inventory) {
         this.title = title;
         this.description = description;
         this.seller = seller;
@@ -111,12 +110,13 @@ public class Product extends BaseEntity {
         this.viewCount = 0;
     }
 
-    // ProductCreateRequest DTO 객체로부터 Product 엔티티 생성
+    // Product 생성 (서비스 레이어에서 업로드된 URL을 받아 생성)
     public static Product of(
-        ProductCreateRequest request,
-        User seller,
-        Category category
-    ) {
+            ProductCreateRequest request,
+            User seller,
+            Category category,
+            String thumbnailImageUrl,
+            String storyImageUrl) {
         return Product.builder()
                 .title(request.getTitle())
                 .description(request.getDescription())
@@ -126,8 +126,8 @@ public class Product extends BaseEntity {
                 .goalAmount(request.getGoalAmount())
                 .startDate(request.getStartDate())
                 .endDate(request.getEndDate())
-                .thumbnailImageUrl(request.getThumbnailImageUrl())
-                .storyImageUrl(request.getStoryImageUrl())
+                .thumbnailImageUrl(thumbnailImageUrl)
+                .storyImageUrl(storyImageUrl)
                 .inventory(request.getInventory())
                 .build();
     }
@@ -163,9 +163,8 @@ public class Product extends BaseEntity {
 
     // 상품 정보 수정 (선택적 업데이트)
     public void update(
-        String title, String description, Category category,
-        LocalDateTime endDate, String thumbnailImageUrl, String storyImageUrl
-    ) {
+            String title, String description, Category category,
+            LocalDateTime endDate, String thumbnailImageUrl, String storyImageUrl) {
         if (title != null && !title.isBlank()) {
             this.title = title;
         }
