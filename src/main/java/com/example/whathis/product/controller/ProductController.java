@@ -61,6 +61,15 @@ public class ProductController {
         return ResponseEntity.ok(ApiResponse.success(response));
     }
 
+    // 특정 유저가 생성한 상품 목록 조회 (유저 ID 기반)
+    @GetMapping("/users/{userId}")
+    public ResponseEntity<ApiResponse<List<ProductResponse>>> findAllProductsByUserId(
+            @PathVariable Long userId
+    ) {
+        List<ProductResponse> response = productService.findAllProductsByUserId(userId);
+        return ResponseEntity.ok(ApiResponse.success(response));
+    }
+
     // 상품 단일 조회
     @GetMapping("/{productId}")
     public ResponseEntity<ApiResponse<ProductDetailResponse>> findProductById(

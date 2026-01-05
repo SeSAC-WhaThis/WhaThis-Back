@@ -1,9 +1,7 @@
 package com.example.whathis.product.repository;
 
 import com.example.whathis.product.entity.Product;
-import com.example.whathis.user.entity.User;
 import java.math.BigDecimal;
-import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.domain.Page;
@@ -43,7 +41,7 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
            "JOIN FETCH p.seller " +
            "LEFT JOIN FETCH p.category " +
            "WHERE p.seller.id = :sellerId")
-    List<Product> findAllMyProducts(@Param("sellerId") Long sellerId);
+    List<Product> findAllSellingProducts(@Param("sellerId") Long sellerId);
 
     // 특정 사용자의 총 누적 판매 금액 조회
     // 성공으로 종료된 상품의 누적 판매 금액이므로 endDate(판매 종료일)가 현재보다 과거여야하고,
