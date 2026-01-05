@@ -45,9 +45,9 @@ public class ProductDetailResponse {
 
     // Entity -> DTO 변환
     public static ProductDetailResponse from(
-        Product product,
-        Long likeCount,
-        Boolean isLiked
+            Product product,
+            Long likeCount,
+            Boolean isLiked
     ) {
         return ProductDetailResponse.builder()
                 .id(product.getId())
@@ -62,8 +62,12 @@ public class ProductDetailResponse {
                 .endDate(product.getEndDate())
 
                 .viewCount(product.getViewCount())
-                .thumbnailImageUrl(product.getThumbnailImageUrl())
-                .storyImageUrl(product.getStoryImageUrl())
+                .thumbnailImageUrl(product.getThumbnailImageUrl() != null
+                        ? "http://localhost:8080" + product.getThumbnailImageUrl()
+                        : null)
+                .storyImageUrl(product.getStoryImageUrl() != null
+                        ? "http://localhost:8080" + product.getStoryImageUrl()
+                        : null)
                 .seller(UserResponse.from(product.getSeller()))
                 .category(CategoryResponse.from(product.getCategory()))
                 .inventory(product.getInventory())

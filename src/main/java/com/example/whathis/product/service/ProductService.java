@@ -100,8 +100,8 @@ public class ProductService {
         }
 
         try {
-            // 저장 디렉토리 설정
-            String uploadDir = "src/main/resources/static/uploads";
+            // 저장 디렉토리 설정 (프로젝트 루트의 uploads 폴더)
+            String uploadDir = "uploads";
             Path uploadPath = Paths.get(uploadDir);
 
             if (!Files.exists(uploadPath)) {

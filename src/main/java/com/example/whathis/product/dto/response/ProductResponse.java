@@ -47,7 +47,9 @@ public class ProductResponse {
                 .startDate(product.getStartDate())
                 .endDate(product.getEndDate())
                 .viewCount(product.getViewCount())
-                .thumbnailImageUrl(product.getThumbnailImageUrl())
+                .thumbnailImageUrl(product.getThumbnailImageUrl() != null
+                        ? "http://localhost:8080" + product.getThumbnailImageUrl()
+                        : null)
                 .seller(UserResponse.from(product.getSeller()))
                 .category(CategoryResponse.from(product.getCategory()))
                 .daysLeft(calculateDaysLeft(product.getEndDate()))
