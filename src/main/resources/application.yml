@@ -12,7 +12,7 @@ spring:
   # JPA 설정
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: update
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MySQLDialect
@@ -23,7 +23,7 @@ spring:
   # SQL 로깅
   sql:
     init:
-      mode: always
+      mode: never
 
 # 로깅 설정
 logging:

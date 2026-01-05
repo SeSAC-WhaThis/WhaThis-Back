@@ -39,8 +39,9 @@ public class ProductService {
 
     @Transactional
     public ProductDetailResponse save(
-            ProductCreateRequest request,
-            User currentUser) {
+        ProductCreateRequest request,
+        User currentUser
+    ) {
         // 1. 유저 로그인 체크
         if (currentUser == null) {
             throw new BusinessException(ErrorCode.UNAUTHORIZED, "로그인이 필요합니다.");
@@ -129,8 +130,9 @@ public class ProductService {
 
     // 상품 날짜 검증
     private void validateProductDates(
-            LocalDateTime startDate,
-            LocalDateTime endDate) {
+        LocalDateTime startDate,
+        LocalDateTime endDate
+    ) {
         LocalDateTime now = LocalDateTime.now();
 
         // 시작일이 과거인지 확인 (당일은 허용)
@@ -177,7 +179,20 @@ public class ProductService {
             throw new BusinessException(ErrorCode.UNAUTHORIZED, "로그인이 필요합니다.");
         }
 
-        return productRepository.findAllMyProducts(currentUser.getId())
+        return productRepository.findAllSellingProducts(currentUser.getId())
+                .stream()
+                .map(ProductResponse::from)
+                .collect(Collectors.toList());
+    }
+
+    // 특정 유저가 생성한 제품 전체 조회 (유저 ID 기반)
+    public List<ProductResponse> findAllProductsByUserId(Long userId) {
+        // 유저 존재 여부 확인
+        if (!userRepository.existsById(userId)) {
+            throw new BusinessException(ErrorCode.USER_NOT_FOUND);
+        }
+
+        return productRepository.findAllSellingProducts(userId)
                 .stream()
                 .map(ProductResponse::from)
                 .collect(Collectors.toList());
@@ -185,23 +200,28 @@ public class ProductService {
 
     // 제품 상세 조회
     @Transactional // 조회수 증가를 위해 @Transactional 필요
-    public ProductDetailResponse findById(Long productId, User currentUser) {
+    public ProductDetailResponse findById(
+        Long productId,
+        User currentUser
+    ) {
         return getDetailInternal(productId, currentUser, true);
     }
 
     // 제품 상세 조회 (제품 정보 수정, 좋아요 요청 시 사용)
     // 제품 정보 수정, 좋아요, 좋아요 취소 -> 조회수가 증가하지 않아야 함.
     public ProductDetailResponse getDetail(
-            Long productId,
-            User currentUser) {
+        Long productId,
+        User currentUser
+    ) {
         return getDetailInternal(productId, currentUser, false);
     }
 
     @Transactional
     public ProductDetailResponse update(
-            Long productId,
-            ProductUpdateRequest request,
-            User currentUser) {
+        Long productId,
+        ProductUpdateRequest request,
+        User currentUser
+    ) {
         // 1. 로그인 체크
         if (currentUser == null) {
             throw new BusinessException(ErrorCode.UNAUTHORIZED, "로그인이 필요합니다.");
@@ -242,8 +262,9 @@ public class ProductService {
 
     @Transactional
     public void delete(
-            Long productId,
-            User currentUser) {
+        Long productId,
+        User currentUser
+    ) {
         // 1. 로그인 체크
         if (currentUser == null) {
             throw new BusinessException(ErrorCode.UNAUTHORIZED, "로그인이 필요합니다.");
@@ -263,9 +284,10 @@ public class ProductService {
     }
 
     private ProductDetailResponse getDetailInternal(
-            Long productId,
-            User currentUser,
-            boolean increaseViewCount) {
+        Long productId,
+        User currentUser,
+        boolean increaseViewCount
+    ) {
         // 1. Product 조회 (N+1 방지: seller, category fetch join)
         Product foundProduct = productRepository.findByIdWithSellerAndCategory(productId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.PRODUCT_NOT_FOUND));
