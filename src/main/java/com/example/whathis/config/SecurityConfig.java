@@ -1,6 +1,5 @@
 package com.example.whathis.config;
 
-
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -33,9 +32,10 @@ public class SecurityConfig {
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/auth/signup", "/auth/login", "/auth/kakao").permitAll()
-                        .requestMatchers("/products/**").permitAll()    // Product API 허용 (테스트용)
-                        .requestMatchers("/categories/**").permitAll()  // Category API 허용 (테스트용)
+                        .requestMatchers("/products/**").permitAll()
+                        .requestMatchers("/categories/**").permitAll()
                         .requestMatchers("/users/profile/{userId}").permitAll()
+                        .requestMatchers("/uploads/**").permitAll() // 업로드된 이미지 접근 허용
                         .anyRequest().authenticated())
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class
                 );

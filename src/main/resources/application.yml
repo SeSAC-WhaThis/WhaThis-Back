@@ -2,6 +2,12 @@ spring:
   application:
     name: whathis
 
+  # Multipart 설정 (파일 업로드 용량 제한)
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
+
   # MySQL 데이터베이스 설정
   datasource:
     url: ${DB_URL}
