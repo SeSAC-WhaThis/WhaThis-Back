@@ -205,6 +205,10 @@ public class Product extends BaseEntity {
             throw new IllegalStateException("재고가 부족합니다. 남은 재고: " + this.inventory);
         }
         this.inventory -= quantity;
+        // 펀딩 모금액 증가
+        this.currentAmount = this.currentAmount.add(
+                this.price.multiply(BigDecimal.valueOf(quantity))
+        );
     }
 
     // 재고 증가 (펀딩 취소 시)

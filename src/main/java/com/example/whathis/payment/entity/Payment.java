@@ -24,8 +24,11 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.UUID;
+
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.cglib.core.Local;
 
 @Entity
 @Getter
@@ -94,4 +97,26 @@ public class Payment extends BaseEntity {
             + "-" + UUID.randomUUID().toString().substring(0, 8).toUpperCase();
     }
 
+    @Builder
+    private Payment(
+            Order order,
+            User user,
+            BigDecimal amount,
+            PaymentMethod method,
+            PaymentStatus status,
+            PaymentType type,
+            String pgProvider,
+            String pgTransactionId,
+            LocalDateTime paidAt
+    ) {
+        this.order = order;
+        this.user = user;
+        this.amount = amount;
+        this.method = method;
+        this.status = status;
+        this.type = type;
+        this.pgProvider = pgProvider;
+        this.pgTransactionId = pgTransactionId;
+        this.paidAt = paidAt;
+    }
 }
