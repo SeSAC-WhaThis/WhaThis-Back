@@ -14,11 +14,18 @@ import com.example.whathis.productlike.repository.ProductLikeRepository;
 import com.example.whathis.user.entity.User;
 import com.example.whathis.user.repository.UserRepository;
 import java.time.LocalDateTime;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
+import java.io.IOException;
 
 @Service
 @RequiredArgsConstructor
@@ -32,9 +39,8 @@ public class ProductService {
 
     @Transactional
     public ProductDetailResponse save(
-        ProductCreateRequest request,
-        User currentUser
-    ) {
+            ProductCreateRequest request,
+            User currentUser) {
         // 1. 유저 로그인 체크
         if (currentUser == null) {
             throw new BusinessException(ErrorCode.UNAUTHORIZED, "로그인이 필요합니다.");
@@ -60,21 +66,71 @@ public class ProductService {
         // 4. 날짜 검증
         validateProductDates(request.getStartDate(), request.getEndDate());
 
-        // 5. Product 생성
-        Product product = Product.of(request, currentUser, category);
+        // 5. 이미지 업로드 처리
+        String thumbnailImageUrl = uploadFile(request.getThumbnailImageUrl());
+        String storyImageUrl = uploadFile(request.getStoryImageUrl());
 
-        // 6. Product 저장
+        // 6. Product 생성
+        Product product = Product.builder()
+                .title(request.getTitle())
+                .description(request.getDescription())
+                .seller(currentUser)
+                .category(category)
+                .price(request.getPrice())
+                .goalAmount(request.getGoalAmount())
+                .startDate(request.getStartDate())
+                .endDate(request.getEndDate())
+                .thumbnailImageUrl(thumbnailImageUrl)
+                .storyImageUrl(storyImageUrl)
+                .inventory(request.getInventory())
+                .build();
+
+        // 7. Product 저장
         Product savedProduct = productRepository.save(product);
 
-        // 7. ProductDetailResponse 반환 (생성 시 좋아요 0, 좋아요 여부 false)
+        // 8. ProductDetailResponse 반환 (생성 시 좋아요 0, 좋아요 여부 false)
         return ProductDetailResponse.from(savedProduct, 0L, false);
+    }
+
+    // 파일 업로드 처리 (로컬 저장소)
+    private String uploadFile(MultipartFile file) {
+        if (file == null || file.isEmpty()) {
+            return null;
+        }
+
+        try {
+            // 저장 디렉토리 설정
+            String uploadDir = "src/main/resources/static/uploads";
+            Path uploadPath = Paths.get(uploadDir);
+
+            if (!Files.exists(uploadPath)) {
+                Files.createDirectories(uploadPath);
+            }
+
+            // 고유 파일명 생성
+            String originalFileName = file.getOriginalFilename();
+            String extension = "";
+            if (originalFileName != null && originalFileName.contains(".")) {
+                extension = originalFileName.substring(originalFileName.lastIndexOf("."));
+            }
+            String fileName = UUID.randomUUID().toString() + extension;
+
+            // 파일 저장
+            Path filePath = uploadPath.resolve(fileName);
+            Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
+
+            // 반환할 URL (정적 리소스 경로)
+            return "/uploads/" + fileName;
+
+        } catch (IOException e) {
+            throw new BusinessException(ErrorCode.INTERNAL_SERVER_ERROR, "파일 업로드 중 오류가 발생했습니다.");
+        }
     }
 
     // 상품 날짜 검증
     private void validateProductDates(
-        LocalDateTime startDate,
-        LocalDateTime endDate
-    ) {
+            LocalDateTime startDate,
+            LocalDateTime endDate) {
         LocalDateTime now = LocalDateTime.now();
 
         // 시작일이 과거인지 확인 (당일은 허용)
@@ -136,18 +192,16 @@ public class ProductService {
     // 제품 상세 조회 (제품 정보 수정, 좋아요 요청 시 사용)
     // 제품 정보 수정, 좋아요, 좋아요 취소 -> 조회수가 증가하지 않아야 함.
     public ProductDetailResponse getDetail(
-        Long productId,
-        User currentUser
-    ) {
+            Long productId,
+            User currentUser) {
         return getDetailInternal(productId, currentUser, false);
     }
 
     @Transactional
     public ProductDetailResponse update(
-        Long productId,
-        ProductUpdateRequest request,
-        User currentUser
-    ) {
+            Long productId,
+            ProductUpdateRequest request,
+            User currentUser) {
         // 1. 로그인 체크
         if (currentUser == null) {
             throw new BusinessException(ErrorCode.UNAUTHORIZED, "로그인이 필요합니다.");
@@ -188,9 +242,8 @@ public class ProductService {
 
     @Transactional
     public void delete(
-        Long productId,
-        User currentUser
-    ) {
+            Long productId,
+            User currentUser) {
         // 1. 로그인 체크
         if (currentUser == null) {
             throw new BusinessException(ErrorCode.UNAUTHORIZED, "로그인이 필요합니다.");
@@ -210,10 +263,9 @@ public class ProductService {
     }
 
     private ProductDetailResponse getDetailInternal(
-        Long productId,
-        User currentUser,
-        boolean increaseViewCount
-    ) {
+            Long productId,
+            User currentUser,
+            boolean increaseViewCount) {
         // 1. Product 조회 (N+1 방지: seller, category fetch join)
         Product foundProduct = productRepository.findByIdWithSellerAndCategory(productId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.PRODUCT_NOT_FOUND));
