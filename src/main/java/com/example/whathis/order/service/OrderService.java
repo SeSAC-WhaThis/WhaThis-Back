@@ -15,6 +15,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -53,5 +55,14 @@ public class OrderService {
         orderRepository.save(order);
 
         return OrderCreateResponse.from(order);
+    }
+
+    @Transactional(readOnly = true)
+    public List<OrderCreateResponse> getOrderByUser(User buyer) {
+        List<Order> orders = orderRepository.findAllByBuyerOrderByIdDesc(buyer);
+
+        return orders.stream()
+                .map(OrderCreateResponse::from)
+                .collect(Collectors.toList());
     }
 }
