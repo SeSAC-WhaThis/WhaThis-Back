@@ -122,4 +122,13 @@ public class ProductController {
         return ResponseEntity.ok(ApiResponse.success(response));
     }
 
+    // 유저의 좋아요 제품만 조회
+    @GetMapping("/like")
+    public ResponseEntity<ApiResponse<List<ProductResponse>>> getMyLikeProducts(
+        @AuthenticationPrincipal CustomUserDetails userDetails) {
+        User currentUser = userDetails != null ? userDetails.getUser() : null;
+        List<ProductResponse> response = productLikeService.getLikedProducts(currentUser);
+        return ResponseEntity.ok(ApiResponse.success(response));
+    }
+
 }

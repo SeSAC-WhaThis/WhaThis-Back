@@ -1,6 +1,7 @@
 package com.example.whathis.productlike.repository;
 
 import com.example.whathis.productlike.entity.ProductLike;
+import java.util.List;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -16,5 +17,8 @@ public interface ProductLikeRepository extends JpaRepository<ProductLike, Long> 
 
     // 사용자의 특정 상품 좋아요 조회
     Optional<ProductLike> findByUserIdAndProductId(Long userId, Long productId);
+
+    // 사용자가 좋아요를 누른 모든 상품 조회
+    List<ProductLike> findAllByUserId(Long userId);
 
 }
