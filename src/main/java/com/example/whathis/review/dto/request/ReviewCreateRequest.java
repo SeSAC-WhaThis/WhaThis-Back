@@ -15,13 +15,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class ReviewCreateRequest {
 
-    @NotNull(message = "주문 ID는 필수입니다.")
-    private Long orderId;
-
-    @Pattern(
-        regexp = "^(https?://.*\\.(png|jpg|jpeg|webp))$",
-        message = "이미지 URL(jpg, jpeg, png, webp) 형식이어야 합니다."
-    )
+    @Pattern(regexp = "^(https?://.*\\.(png|jpg|jpeg|webp))$", message = "이미지 URL(jpg, jpeg, png, webp) 형식이어야 합니다.")
     private String imageUrls;
 
     @NotBlank(message = "리뷰 내용은 필수입니다.")
@@ -29,7 +23,8 @@ public class ReviewCreateRequest {
     private String content;
 
     @NotNull(message = "평점은 필수입니다.")
-    @Min(1) @Max(5)
+    @Min(1)
+    @Max(5)
     private Integer star;
 
 }
