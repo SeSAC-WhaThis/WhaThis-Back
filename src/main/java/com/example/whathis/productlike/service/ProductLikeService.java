@@ -3,12 +3,15 @@ package com.example.whathis.productlike.service;
 import com.example.whathis.common.exception.BusinessException;
 import com.example.whathis.common.exception.ErrorCode;
 import com.example.whathis.product.dto.response.ProductDetailResponse;
+import com.example.whathis.product.dto.response.ProductResponse;
 import com.example.whathis.product.entity.Product;
 import com.example.whathis.product.repository.ProductRepository;
 import com.example.whathis.product.service.ProductService;
 import com.example.whathis.productlike.entity.ProductLike;
 import com.example.whathis.productlike.repository.ProductLikeRepository;
 import com.example.whathis.user.entity.User;
+import java.util.List;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -79,6 +82,23 @@ public class ProductLikeService {
 
         // 최신 상품 정보(좋아요 수, isLiked 포함) 반환 (조회수 증가 없이)
         return productService.getDetail(productId, currentUser);
+    }
+
+    @Transactional(readOnly = true)
+    public List<ProductResponse> getLikedProducts(User currentUser) {
+        // 로그인 체크
+        if (currentUser == null) {
+            throw new BusinessException(ErrorCode.UNAUTHORIZED, "로그인이 필요합니다.");
+        }
+
+        // 사용자가 좋아요를 누른 모든 ProductLike 조회
+        List<ProductLike> productLikes = productLikeRepository.findAllByUserId(currentUser.getId());
+
+        // ProductLike에서 Product를 추출하여 ProductResponse로 변환
+        return productLikes.stream()
+                .map(ProductLike::getProduct)
+                .map(ProductResponse::from)
+                .collect(Collectors.toList());
     }
 
 }
