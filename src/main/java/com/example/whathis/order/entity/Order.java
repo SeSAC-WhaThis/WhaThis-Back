@@ -118,4 +118,11 @@ public class Order extends BaseEntity {
         this.status = OrderStatus.RESERVED; // 펀딩은 '예약' 상태가 됨
         this.confirmedAt = LocalDateTime.now();
     }
+
+    // 주문 취소 상태 변경
+    public void cancelOrder(String reason) {
+        this.status = OrderStatus.CANCELLED;
+        this.cancelledAt = LocalDateTime.now();
+        this.cancellationReason = reason;
+    }
 }

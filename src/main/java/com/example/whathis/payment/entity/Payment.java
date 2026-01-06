@@ -1,6 +1,7 @@
 package com.example.whathis.payment.entity;
 
 import com.example.whathis.BaseEntity;
+import com.example.whathis.common.order.OrderStatus;
 import com.example.whathis.common.payment.PaymentMethod;
 import com.example.whathis.common.payment.PaymentStatus;
 import com.example.whathis.common.payment.PaymentType;
@@ -118,5 +119,12 @@ public class Payment extends BaseEntity {
         this.pgProvider = pgProvider;
         this.pgTransactionId = pgTransactionId;
         this.paidAt = paidAt;
+    }
+
+    // 결제 취소 상태 변경
+    public void cancelPayment(String reason) {
+        this.status = PaymentStatus.CANCELLED;
+        this.cancelledAt = LocalDateTime.now();
+        this.cancellationReason = reason;
     }
 }

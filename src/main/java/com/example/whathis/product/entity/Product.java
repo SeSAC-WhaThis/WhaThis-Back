@@ -199,8 +199,8 @@ public class Product extends BaseEntity {
         return this.seller.getId().equals(user.getId());
     }
 
-    // 재고 감소 (펀딩 참여 시)
-    public void decreaseInventory(int quantity) {
+    // 재고 감소 및 모금액 증가 (펀딩 참여 시)
+    public void decreaseInventoryAndIncreaseCurrentAmount(int quantity) {
         if (this.inventory < quantity) {
             throw new IllegalStateException("재고가 부족합니다. 남은 재고: " + this.inventory);
         }
@@ -212,8 +212,12 @@ public class Product extends BaseEntity {
     }
 
     // 재고 증가 (펀딩 취소 시)
-    public void increaseInventory(int quantity) {
+    public void increaseInventoryAndDecreaseCurrentAmount(int quantity) {
         this.inventory += quantity;
+        // 펀딩 모금액 감소
+        this.currentAmount = this.currentAmount.subtract(
+                this.price.multiply(BigDecimal.valueOf(quantity))
+        );
     }
 
     // 재고 확인

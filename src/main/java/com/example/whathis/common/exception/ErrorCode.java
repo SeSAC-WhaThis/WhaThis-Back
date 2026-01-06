@@ -14,6 +14,8 @@ public enum ErrorCode {
     PASSWORD_MISMATCH("PASSWORD_MISMATCH", "새 비밀번호가 일치하지 않습니다"),
     PASSWORD_SAME_AS_OLD("PASSWORD_SAME_AS_OLD", "기존 비밀번호와 동일합니다"),
     SAME_AS_CURRENT_NICKNAME("SAME_AS_CURRENT_NICKNAME", "기존 닉네임과 동일합니다."),
+    PAYMENT_AMOUNT_MISMATCH("PAYMENT_AMOUNT_MISMATCH", "결제 금액이 일치하지 않습니다."),
+    PAYMENT_NOT_PAID("PAYMENT_NOT_PAID", "결제가 정상적으로 완료되지 않았습니다."),
     
     // 401 Unauthorized
     UNAUTHORIZED("UNAUTHORIZED", "인증이 필요합니다"),
@@ -33,6 +35,7 @@ public enum ErrorCode {
     PRODUCT_NOT_FOUND("PRODUCT_NOT_FOUND", "상품을 찾을 수 없습니다"),
     ORDER_NOT_FOUND("ORDER_NOT_FOUND", "주문을 찾을 수 없습니다"),
     REVIEW_NOT_FOUND("REVIEW_NOT_FOUND", "리뷰를 찾을 수 없습니다"),
+    PAYMENT_NOT_FOUND("PAYMENT_NOT_FOUND", "결제를 찾을 수 없습니다."),
     
     // 409 Conflict
     ALREADY_EXISTS("ALREADY_EXISTS", "이미 존재합니다"),
@@ -57,7 +60,10 @@ public enum ErrorCode {
     // 500 Internal Server Error
     INTERNAL_SERVER_ERROR("INTERNAL_SERVER_ERROR", "서버 오류가 발생했습니다"),
     OAUTH_TOKEN_FAILED("OAUTH_TOKEN_FAILED", "카카오 토큰 요청에 실패했습니다"),
-    OAUTH_USER_INFO_FAILED("OAUTH_USER_INFO_FAILED", "카카오 사용자 정보 요청에 실패했습니다");
+    OAUTH_USER_INFO_FAILED("OAUTH_USER_INFO_FAILED", "카카오 사용자 정보 요청에 실패했습니다"),
+    PAYMENT_FETCH_FAILED("PAYMENT_FETCH_FAILED", "결제 정보 조회에 실패했습니다."),
+    PAYMENT_CANCEL_FAILED("PAYMENT_CANCEL_FAILED", "결제 취소에 실패했습니다. (PG사 응답 오류)"),
+    PG_CONNECT_ERROR("PG_CONNECT_ERROR", "PG사 연동 중 오류가 발생했습니다.");
     
     private final String code;
     private final String message;
