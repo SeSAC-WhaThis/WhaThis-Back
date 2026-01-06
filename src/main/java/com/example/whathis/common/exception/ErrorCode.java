@@ -47,10 +47,10 @@ public enum ErrorCode {
     ALREADY_FOLLOWING("ALREADY_FOLLOWING", "이미 팔로우 중입니다"),
     NOT_FOLLOWING("NOT_FOLLOWING", "팔로우하지 않은 사용자입니다"),
     OUT_OF_STOCK("OUT_OF_STOCK", "재고가 부족합니다"),
-    ALREADY_REVIEWED("ALREADY_REVIEWED", "이미 리뷰를 작성한 주문입니다"),
+    ALREADY_REVIEWED("ALREADY_REVIEWED", "이미 이 상품에 대해 기대평을 작성하셨습니다."),
     
     // 422 Unprocessable Entity
-    FUNDING_NOT_ONGOING("FUNDING_NOT_ONGOING", "펀딩이 진행 중이 아닙니다"),
+    FUNDING_NOT_ONGOING("FUNDING_NOT_ONGOING", "기대평은 펀딩 기간 내에만 작성 가능합니다."),
     FUNDING_ENDED("FUNDING_ENDED", "펀딩이 종료되었습니다"),
     INVALID_ORDER_STATUS("INVALID_ORDER_STATUS", "주문 상태가 올바르지 않습니다"),
     CANNOT_CANCEL_ORDER("CANNOT_CANCEL_ORDER", "주문을 취소할 수 없습니다"),
