@@ -157,7 +157,10 @@ public class ProductService {
     }
 
     // 제품 전체 조회 (또는 카테고리별 조회)
-    public List<ProductResponse> findAll(Long categoryId) {
+    public List<ProductResponse> findAll(
+        Long categoryId,
+        User currentUser
+    ) {
         // categoryId가 있으면 카테고리별 조회, 없으면 전체 조회
         List<Product> products;
         if (categoryId != null) {
@@ -167,9 +170,23 @@ public class ProductService {
             products = productRepository.findAllWithSellerAndCategory();
         }
 
-        return products.stream()
+        List<ProductResponse> responses = products.stream()
                 .map(ProductResponse::from)
                 .collect(Collectors.toList());
+
+        // 좋아요 상태와 수 설정
+        for (ProductResponse response : responses) {
+            Long likeCount = productLikeRepository.countByProductId(response.getId());
+            response.setLikeCount(likeCount);
+
+            boolean isLiked = false;
+            if (currentUser != null) {
+                isLiked = productLikeRepository.existsByUserIdAndProductId(currentUser.getId(), response.getId());
+            }
+            response.setIsLiked(isLiked);
+        }
+
+        return responses;
     }
 
     // 내가 등록한 제품 전체 조회

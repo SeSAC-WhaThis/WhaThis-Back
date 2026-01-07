@@ -47,8 +47,11 @@ public class ProductController {
     // 상품 목록 조회 (필터링: categoryId)
     @GetMapping
     public ResponseEntity<ApiResponse<List<ProductResponse>>> findAllProducts(
-            @RequestParam(required = false) Long categoryId) {
-        List<ProductResponse> response = productService.findAll(categoryId);
+            @RequestParam(required = false) Long categoryId,
+            @AuthenticationPrincipal CustomUserDetails userDetails
+    ) {
+        User currentUser = userDetails != null ? userDetails.getUser() : null;
+        List<ProductResponse> response = productService.findAll(categoryId, currentUser);
         return ResponseEntity.ok(ApiResponse.success(response));
     }
 
@@ -125,7 +128,8 @@ public class ProductController {
     // 유저의 좋아요 제품만 조회
     @GetMapping("/like")
     public ResponseEntity<ApiResponse<List<ProductResponse>>> getMyLikeProducts(
-        @AuthenticationPrincipal CustomUserDetails userDetails) {
+        @AuthenticationPrincipal CustomUserDetails userDetails
+    ) {
         User currentUser = userDetails != null ? userDetails.getUser() : null;
         List<ProductResponse> response = productLikeService.getLikedProducts(currentUser);
         return ResponseEntity.ok(ApiResponse.success(response));
