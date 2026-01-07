@@ -4,6 +4,7 @@ import com.example.whathis.common.response.ApiResponse;
 import com.example.whathis.config.CustomUserDetails;
 import com.example.whathis.order.dto.request.OrderCreateRequest;
 import com.example.whathis.order.dto.response.OrderCreateResponse;
+import com.example.whathis.order.dto.response.OrderResponse;
 import com.example.whathis.order.service.OrderService;
 import com.example.whathis.payment.dto.request.PaymentCancelRequest;
 import com.example.whathis.payment.service.PaymentService;
@@ -35,11 +36,20 @@ public class OrderController {
     }
 
     @GetMapping("/my")
-    public ResponseEntity<ApiResponse<List<OrderCreateResponse>>> getMyOrders(
+    public ResponseEntity<ApiResponse<List<OrderResponse>>> getMyOrders(
             @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
-        List<OrderCreateResponse> responses = orderService.getOrderByUser(userDetails.getUser());
+        List<OrderResponse> responses = orderService.getOrderByUser(userDetails.getUser());
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success(responses));
+    }
+
+    @GetMapping("/{orderId}")
+    public ResponseEntity<ApiResponse<OrderResponse>> getOrderById(
+            @AuthenticationPrincipal CustomUserDetails userDetails,
+            @PathVariable Long orderId
+    ) {
+        OrderResponse response = orderService.getOrderByUserAndId(userDetails.getUser(), orderId);
+        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success(response));
     }
 
     @PostMapping("/cancel")
