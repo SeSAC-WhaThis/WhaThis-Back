@@ -9,6 +9,7 @@ import com.example.whathis.follow.repository.FollowRepository;
 import com.example.whathis.product.dto.response.ProductResponse;
 import com.example.whathis.product.entity.Product;
 import com.example.whathis.product.repository.ProductRepository;
+import com.example.whathis.productlike.repository.ProductLikeRepository;
 import com.example.whathis.user.entity.User;
 import com.example.whathis.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -26,6 +27,7 @@ public class FollowService {
     private final FollowRepository followRepository;
     private final UserRepository userRepository;
     private final ProductRepository productRepository;
+    private final ProductLikeRepository productLikeRepository;
 
     @Transactional
     public void follow(User currentUser, Long targetUserId) {
@@ -76,9 +78,22 @@ public class FollowService {
     }
 
     public List<ProductResponse> getProductByFollowerId(User currentUser) {
-        return productRepository.findProductsByFollowerId(currentUser.getId())
+        List<ProductResponse> responses = productRepository.findProductsByFollowerId(currentUser.getId())
                 .stream()
                 .map(ProductResponse::from)
                 .collect(Collectors.toList());
+
+        for (ProductResponse response : responses) {
+            Long likeCount = productLikeRepository.countByProductId(response.getId());
+            response.setLikeCount(null);
+
+            boolean isLiked = false;
+            if (currentUser != null) {
+                isLiked = productLikeRepository.existsByUserIdAndProductId(currentUser.getId(), response.getId());
+            }
+            response.setIsLiked(isLiked);
+        }
+
+        return responses;
     }
 }
