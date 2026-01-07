@@ -115,8 +115,8 @@ public class PaymentService {
         Order managedOrder = orderRepository.findById(order.getId())
                 .orElseThrow(() -> new BusinessException(ErrorCode.ORDER_NOT_FOUND));
 
-        // 이미 취소된 주문은 건너뛰기
-        if (managedOrder.getStatus() == OrderStatus.CANCELLED) {
+        // RESERVED 상태가 아니라면 환불 처리를 건너뜀
+        if (managedOrder.getStatus() != OrderStatus.RESERVED) {
             return;
         }
         processRefund(managedOrder, "펀딩 실패로 인한 자동 환불");
