@@ -10,8 +10,10 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Getter
+@Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -33,6 +35,8 @@ public class ProductResponse {
     private CategoryResponse category;
     private Long daysLeft;
     private LocalDateTime createdAt;
+    private Long likeCount;
+    private Boolean isLiked;
 
     public static ProductResponse from(Product product) {
         return ProductResponse.builder()
