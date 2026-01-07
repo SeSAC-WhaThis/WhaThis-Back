@@ -1,5 +1,6 @@
 package com.example.whathis.order.dto.response;
 
+import com.example.whathis.common.order.OrderStatus;
 import com.example.whathis.order.entity.Order;
 import lombok.Builder;
 import lombok.Getter;
@@ -18,6 +19,7 @@ public class OrderCreateResponse {
     private String receiverPhone;
     private String receiverAddress;
     private String requestNote;
+    private OrderStatus orderStatus;
 
     public static OrderCreateResponse from(Order order) {
         return OrderCreateResponse.builder()
@@ -29,8 +31,7 @@ public class OrderCreateResponse {
                 .receiverPhone(order.getReceiverPhone())
                 .receiverAddress(order.getReceiverAddress())
                 .requestNote(order.getRequest())
+                .orderStatus(order.getStatus())
                 .build();
-
-
     }
 }
