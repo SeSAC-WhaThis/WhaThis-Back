@@ -125,4 +125,8 @@ public class Order extends BaseEntity {
         this.cancelledAt = LocalDateTime.now();
         this.cancellationReason = reason;
     }
+
+    public void setStatus(OrderStatus status) {
+        this.status = status;
+    }
 }
