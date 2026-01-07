@@ -35,7 +35,7 @@ public class OrderResponse {
                 .merchantUid(order.getOrderNumber())
                 .productName(order.getProduct().getTitle())
                 .productImageUrl(order.getProduct().getThumbnailImageUrl())
-                .orderDate(order.getReservedPaymentDate())
+                .orderDate(order.getCreatedAt())
                 .endDate(order.getProduct().getEndDate())
                 .quantity(order.getQuantity())
                 .totalAmount(order.getTotalAmount())
