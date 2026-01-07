@@ -1,7 +1,9 @@
 package com.example.whathis.product.repository;
 
+import com.example.whathis.common.order.OrderStatus;
 import com.example.whathis.product.entity.Product;
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.domain.Page;
@@ -83,4 +85,11 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
             "AND p.endDate > CURRENT_TIMESTAMP " +
             "ORDER BY p.createdAt DESC")
     List<Product> findProductsByFollowerId(@Param("followerId") Long followerId);
+
+    // endDate가 지났고 RESERVED 상태의 주문이 있는 상품 조회
+    @Query("SELECT DISTINCT o.product " +
+            "FROM Order o " +
+            "WHERE o.product.endDate < :now " +
+            "AND o.status = :status")
+    List<Product> findProductsWithReservedOrders(@Param("now") LocalDateTime now, @Param("status") OrderStatus status);
 }
