@@ -3,6 +3,8 @@ package com.example.whathis.productlike.repository;
 import com.example.whathis.productlike.entity.ProductLike;
 import java.util.List;
 import java.util.Optional;
+
+import com.example.whathis.user.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -21,4 +23,9 @@ public interface ProductLikeRepository extends JpaRepository<ProductLike, Long> 
     // 사용자가 좋아요를 누른 모든 상품 조회
     List<ProductLike> findAllByUserId(Long userId);
 
+    // 해당 유저가 누른 좋아요 모두 삭제
+    void deleteAllByUser(User user);
+
+    // 해당 유저의 상품에 눌린 좋아요 모두 삭제
+    void deleteAllByProductSeller(User user);
 }

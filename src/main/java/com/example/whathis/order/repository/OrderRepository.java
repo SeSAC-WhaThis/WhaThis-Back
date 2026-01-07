@@ -22,4 +22,10 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
 
     @Query("SELECT o FROM Order o JOIN FETCH o.product WHERE o.buyer = :buyer AND o.id = :orderId")
     Optional<Order> findByBuyerAndId(@Param("buyer") User buyer, @Param("orderId") Long orderId);
+
+    // 구매자가 해당 유저인 모든 주문을 삭제
+    void deleteAllByBuyer(User buyer);
+
+    // 상품의 판매자가 해당 유저인 모든 주문을 삭제
+    void deleteAllByProductSeller(User seller);
 }
