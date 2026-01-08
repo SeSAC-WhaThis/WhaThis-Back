@@ -37,7 +37,7 @@ public class SearchTools {
         }
 
         Long categoryId = resolveCategoryIdOrNull(query.categoryName());
-        List<ProductResponse> products = productService.findAll(categoryId);
+        List<ProductResponse> products = productService.findAll(categoryId, null);
         Stream<ProductResponse> stream = products.stream();
 
         LocalDateTime now = LocalDateTime.now();

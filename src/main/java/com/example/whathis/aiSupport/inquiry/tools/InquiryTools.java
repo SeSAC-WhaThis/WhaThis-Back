@@ -49,7 +49,7 @@ public class InquiryTools {
     // ------ Product 관련 tools
     @Tool(description = "현재 등록된 모든 상품목록을 조회합니다. 상품명, 가격, 펀딩 현황 등을 확인할 수 있습니다.")
     public String getAllProducts() {
-        List<ProductResponse> products = productService.findAll(null);
+        List<ProductResponse> products = productService.findAll(null, null);
 
         if (products.isEmpty()) {
             return "현재 등록된 상품이 없습니다.";
@@ -77,7 +77,7 @@ public class InquiryTools {
         if (keyword == null || keyword.isBlank()) {
             return "검색 키워드가 필요합니다.";
         }
-        List<ProductResponse> products = productService.findAll(null);
+        List<ProductResponse> products = productService.findAll(null, null);
 
         List<ProductResponse> filtered = products.stream()
             .filter(p -> (p.getTitle() != null && p.getTitle().contains(keyword)) ||
@@ -106,7 +106,7 @@ public class InquiryTools {
                 "가능한 카테고리: " + categoriesHintText();
         }
 
-        List<ProductResponse> filtered = productService.findAll(categoryId);
+        List<ProductResponse> filtered = productService.findAll(categoryId, null);
 
         if (filtered.isEmpty()) {
             return "'" + categoryName + "' 카테고리에 등록된 상품이 없습니다.";

@@ -32,7 +32,7 @@ public class SearchService {
     public List<ProductResponse> searchProducts(SearchDTOs.SearchRequest request) {
         String query = request != null ? request.query() : null;
         if (query == null || query.isBlank()) {
-            return onlyOngoing(productService.findAll(null));
+            return onlyOngoing(productService.findAll(null, null));
         }
 
         String content = searchChatClient.prompt()
@@ -46,7 +46,7 @@ public class SearchService {
         }
 
         // fallback: 제목/설명/카테고리명에 포함된 항목만
-        List<ProductResponse> all = onlyOngoing(productService.findAll(null));
+        List<ProductResponse> all = onlyOngoing(productService.findAll(null, null));
         String keyword = query.trim();
         return all.stream()
             .filter(p -> contains(p.getTitle(), keyword) ||
