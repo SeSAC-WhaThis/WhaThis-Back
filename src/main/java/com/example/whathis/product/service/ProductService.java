@@ -278,8 +278,10 @@ public class ProductService {
                     category,
                     request.getEndDate(),
                     thumbnailImageUrl,
-                    storyImageUrl
-            );
+                    storyImageUrl,
+                    request.getPrice(),
+                    request.getGoalAmount(),
+                    request.getInventory());
 
         } catch (IllegalArgumentException e) {
             throw new BusinessException(ErrorCode.INVALID_INPUT, e.getMessage());

@@ -164,7 +164,9 @@ public class Product extends BaseEntity {
     // 상품 정보 수정 (선택적 업데이트)
     public void update(
             String title, String description, Category category,
-            LocalDateTime endDate, String thumbnailImageUrl, String storyImageUrl) {
+            LocalDateTime endDate, String thumbnailImageUrl, String storyImageUrl,
+            BigDecimal price, BigDecimal goalAmount, Integer inventory
+    ) {
         if (title != null && !title.isBlank()) {
             this.title = title;
         }
@@ -192,6 +194,18 @@ public class Product extends BaseEntity {
         if (storyImageUrl != null) {
             this.storyImageUrl = storyImageUrl;
         }
+
+        if (price != null) {
+            this.price = price;
+        }
+
+        if (goalAmount != null) {
+            this.goalAmount = goalAmount;
+        }
+
+        if (inventory != null) {
+            this.inventory = inventory;
+        }
     }
 
     // 판매자 확인
@@ -207,8 +221,7 @@ public class Product extends BaseEntity {
         this.inventory -= quantity;
         // 펀딩 모금액 증가
         this.currentAmount = this.currentAmount.add(
-                this.price.multiply(BigDecimal.valueOf(quantity))
-        );
+                this.price.multiply(BigDecimal.valueOf(quantity)));
     }
 
     // 재고 증가 (펀딩 취소 시)
@@ -216,8 +229,7 @@ public class Product extends BaseEntity {
         this.inventory += quantity;
         // 펀딩 모금액 감소
         this.currentAmount = this.currentAmount.subtract(
-                this.price.multiply(BigDecimal.valueOf(quantity))
-        );
+                this.price.multiply(BigDecimal.valueOf(quantity)));
     }
 
     // 재고 확인
