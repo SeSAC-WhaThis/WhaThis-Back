@@ -36,6 +36,7 @@ public class SecurityConfig {
                         .requestMatchers("/categories/**").permitAll()
                         .requestMatchers("/users/profile/{userId}").permitAll()
                         .requestMatchers("/uploads/**").permitAll() // 업로드된 이미지 접근 허용
+                        .requestMatchers("/ai/**").permitAll() //AI서비스 접근 허용
                         .anyRequest().authenticated())
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class
                 );
