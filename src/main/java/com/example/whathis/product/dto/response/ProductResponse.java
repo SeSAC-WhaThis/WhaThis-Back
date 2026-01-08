@@ -33,6 +33,7 @@ public class ProductResponse {
     private String thumbnailImageUrl;
     private UserResponse seller;
     private CategoryResponse category;
+    private Integer inventory;
     private Long daysLeft;
     private LocalDateTime createdAt;
     private Long likeCount;
@@ -56,6 +57,7 @@ public class ProductResponse {
                         : null)
                 .seller(UserResponse.from(product.getSeller()))
                 .category(CategoryResponse.from(product.getCategory()))
+                .inventory(product.getInventory())
                 .daysLeft(calculateDaysLeft(product.getEndDate()))
                 .createdAt(product.getCreatedAt())
                 .build();

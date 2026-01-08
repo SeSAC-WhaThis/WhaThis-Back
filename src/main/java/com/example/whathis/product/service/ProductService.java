@@ -262,13 +262,25 @@ public class ProductService {
 
         // 5. 상품 정보 업데이트 (종료일 검증은 Product.update() 내부에서)
         try {
+            String thumbnailImageUrl = null;
+            if (request.hasThumbnailImageUrl()) {
+                thumbnailImageUrl = uploadFile(request.getThumbnailImageUrl());
+            }
+
+            String storyImageUrl = null;
+            if (request.hasStoryImageUrl()) {
+                storyImageUrl = uploadFile(request.getStoryImageUrl());
+            }
+
             foundProduct.update(
                     request.getTitle(),
                     request.getDescription(),
                     category,
                     request.getEndDate(),
-                    request.getThumbnailImageUrl(),
-                    request.getStoryImageUrl());
+                    thumbnailImageUrl,
+                    storyImageUrl
+            );
+
         } catch (IllegalArgumentException e) {
             throw new BusinessException(ErrorCode.INVALID_INPUT, e.getMessage());
         }
