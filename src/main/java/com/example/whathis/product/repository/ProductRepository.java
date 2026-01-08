@@ -4,6 +4,8 @@ import com.example.whathis.product.entity.Product;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
+
+import com.example.whathis.user.entity.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -83,4 +85,6 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
             "AND p.endDate > CURRENT_TIMESTAMP " +
             "ORDER BY p.createdAt DESC")
     List<Product> findProductsByFollowerId(@Param("followerId") Long followerId);
+
+    void deleteAllBySeller(User seller);
 }

@@ -9,10 +9,13 @@ import com.example.whathis.auth.dto.request.LoginRequest;
 import com.example.whathis.auth.dto.request.SignupRequest;
 import com.example.whathis.auth.dto.response.TokenResponse;
 import com.example.whathis.follow.repository.FollowRepository;
+import com.example.whathis.order.repository.OrderRepository;
+import com.example.whathis.payment.repository.PaymentRepository;
 import com.example.whathis.product.dto.response.ProductResponse;
 import com.example.whathis.product.dto.response.UserProfileResponse;
 import com.example.whathis.product.entity.Product;
 import com.example.whathis.product.repository.ProductRepository;
+import com.example.whathis.productlike.repository.ProductLikeRepository;
 import com.example.whathis.review.repository.ReviewRepository;
 import com.example.whathis.user.dto.response.UserResponse;
 import com.example.whathis.user.entity.User;
@@ -36,6 +39,9 @@ public class UserService {
     private final FollowRepository followRepository;
     private final ReviewRepository reviewRepository;
     private final ProductRepository productRepository;
+    private final OrderRepository orderRepository;
+    private final ProductLikeRepository productLikeRepository;
+    private final PaymentRepository paymentRepository;
 
     @Transactional(readOnly = true)
     public UserResponse getProfile(User user) {
@@ -88,7 +94,22 @@ public class UserService {
         followRepository.deleteByFollower(currentUser);
         followRepository.deleteByFollowing(currentUser);
 
-        // 진행중인 펀딩이나 주문이 있는지 확인하는 로직은 추후에 추가
+        // 구매자 입장에서 관련된 결제, 주문, 리뷰, 좋아요 삭제
+        paymentRepository.deleteAllByUser(currentUser);
+        orderRepository.deleteAllByBuyer(currentUser);
+        reviewRepository.deleteAllByUser(currentUser);
+        productLikeRepository.deleteAllByUser(currentUser);
+
+        // 판매자 입장에서 내 상품과 관련된 데이터(결제, 주문, 리뷰, 좋아요) 삭제 후 상품 삭제
+        paymentRepository.deleteAllByOrderProductSeller(currentUser);
+        orderRepository.deleteAllByProductSeller(currentUser);
+        reviewRepository.deleteAllByProductSeller(currentUser);
+        productLikeRepository.deleteAllByProductSeller(currentUser);
+
+        // 상품 삭제
+        productRepository.deleteAllBySeller(currentUser);
+
+        // 사용자 삭제
         userRepository.delete(currentUser);
     }
 
