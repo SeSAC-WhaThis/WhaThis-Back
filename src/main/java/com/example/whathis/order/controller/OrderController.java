@@ -5,6 +5,7 @@ import com.example.whathis.config.CustomUserDetails;
 import com.example.whathis.order.dto.request.OrderCreateRequest;
 import com.example.whathis.order.dto.response.OrderCreateResponse;
 import com.example.whathis.order.dto.response.OrderResponse;
+import com.example.whathis.order.dto.response.ProductBuyerResponse;
 import com.example.whathis.order.service.OrderService;
 import com.example.whathis.payment.dto.request.PaymentCancelRequest;
 import com.example.whathis.payment.service.PaymentService;
@@ -59,5 +60,14 @@ public class OrderController {
     ) {
         paymentService.cancelPayment(userDetails.getUser(), request);
         return ResponseEntity.ok(ApiResponse.successWithMessage("주문 취소가 완료되었습니다."));
+    }
+
+    @GetMapping("/buyers/{productId}")
+    public ResponseEntity<ApiResponse<List<ProductBuyerResponse>>> getProductBuyers(
+            @AuthenticationPrincipal CustomUserDetails userDetails,
+            @PathVariable Long productId
+    ) {
+        List<ProductBuyerResponse> response = orderService.getProductBuyers(productId, userDetails.getUser());
+        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success(response));
     }
 }
