@@ -37,7 +37,8 @@ public class ProductController {
     @PostMapping
     public ResponseEntity<ApiResponse<ProductDetailResponse>> saveProduct(
             @Valid @ModelAttribute ProductCreateRequest request,
-            @AuthenticationPrincipal CustomUserDetails userDetails) {
+            @AuthenticationPrincipal CustomUserDetails userDetails
+    ) {
         User currentUser = userDetails != null ? userDetails.getUser() : null;
         ProductDetailResponse response = productService.save(request, currentUser);
         return ResponseEntity.status(HttpStatus.CREATED)
@@ -58,7 +59,8 @@ public class ProductController {
     // 본인 등록 상품 목록 조회
     @GetMapping("/my")
     public ResponseEntity<ApiResponse<List<ProductResponse>>> findAllMyProducts(
-            @AuthenticationPrincipal CustomUserDetails userDetails) {
+            @AuthenticationPrincipal CustomUserDetails userDetails
+    ) {
         User currentUser = userDetails != null ? userDetails.getUser() : null;
         List<ProductResponse> response = productService.findAllMyProducts(currentUser);
         return ResponseEntity.ok(ApiResponse.success(response));
@@ -77,7 +79,8 @@ public class ProductController {
     @GetMapping("/{productId}")
     public ResponseEntity<ApiResponse<ProductDetailResponse>> findProductById(
             @PathVariable Long productId,
-            @AuthenticationPrincipal CustomUserDetails userDetails) {
+            @AuthenticationPrincipal CustomUserDetails userDetails
+    ) {
         // 비로그인 사용자도 조회 가능 (isLiked는 false로 반환)
         User currentUser = userDetails != null ? userDetails.getUser() : null;
         ProductDetailResponse response = productService.findById(productId, currentUser);
@@ -85,11 +88,12 @@ public class ProductController {
     }
 
     // 상품 수정
-    @PatchMapping("/{productId}")
+    @PostMapping("/{productId}/update")
     public ResponseEntity<ApiResponse<ProductDetailResponse>> updateProduct(
             @PathVariable Long productId,
-            @Valid @RequestBody ProductUpdateRequest request,
-            @AuthenticationPrincipal CustomUserDetails userDetails) {
+            @Valid @ModelAttribute ProductUpdateRequest request,
+            @AuthenticationPrincipal CustomUserDetails userDetails
+    ) {
         User currentUser = userDetails != null ? userDetails.getUser() : null;
         ProductDetailResponse response = productService.update(productId, request, currentUser);
         return ResponseEntity.ok(ApiResponse.success(response, "제품 정보가 수정되었습니다"));
@@ -99,7 +103,8 @@ public class ProductController {
     @DeleteMapping("/{productId}")
     public ResponseEntity<Void> deleteProductById(
             @PathVariable Long productId,
-            @AuthenticationPrincipal CustomUserDetails userDetails) {
+            @AuthenticationPrincipal CustomUserDetails userDetails
+    ) {
         User currentUser = userDetails != null ? userDetails.getUser() : null;
         productService.delete(productId, currentUser);
         return ResponseEntity.noContent().build();
@@ -109,7 +114,8 @@ public class ProductController {
     @PostMapping("/{productId}/like")
     public ResponseEntity<ApiResponse<ProductDetailResponse>> like(
             @PathVariable Long productId,
-            @AuthenticationPrincipal CustomUserDetails userDetails) {
+            @AuthenticationPrincipal CustomUserDetails userDetails
+    ) {
         User currentUser = userDetails != null ? userDetails.getUser() : null;
         ProductDetailResponse response = productLikeService.like(currentUser, productId);
         return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success(response));
@@ -119,7 +125,8 @@ public class ProductController {
     @DeleteMapping("/{productId}/like")
     public ResponseEntity<ApiResponse<ProductDetailResponse>> unlike(
             @PathVariable Long productId,
-            @AuthenticationPrincipal CustomUserDetails userDetails) {
+            @AuthenticationPrincipal CustomUserDetails userDetails
+    ) {
         User currentUser = userDetails != null ? userDetails.getUser() : null;
         ProductDetailResponse response = productLikeService.unlike(currentUser, productId);
         return ResponseEntity.ok(ApiResponse.success(response));
