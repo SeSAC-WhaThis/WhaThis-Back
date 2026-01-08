@@ -24,6 +24,11 @@ repositories {
     mavenCentral()
 }
 
+//springAi 버전 세팅
+ext {
+    set('springAiVersion', "1.1.2")
+}
+
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-security'
@@ -43,6 +48,17 @@ dependencies {
     implementation 'io.jsonwebtoken:jjwt-api:0.13.0'
     runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.13.0'
     runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.13.0'
+
+    // Spring AI
+    implementation 'org.springframework.ai:spring-ai-starter-model-chat-memory-repository-jdbc'//AI Chat 메모리와 JDBC 연결용
+    implementation 'org.springframework.ai:spring-ai-starter-model-openai'
+}
+
+//Spring AI에 맞는 의존성 버전 세팅
+dependencyManagement {
+    imports {
+        mavenBom "org.springframework.ai:spring-ai-bom:${springAiVersion}"
+    }
 }
 
 tasks.named('test') {
