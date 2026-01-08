@@ -310,6 +310,7 @@ public class ProductService {
             throw new BusinessException(ErrorCode.FORBIDDEN, "본인의 상품만 삭제할 수 있습니다");
         }
 
+        productLikeRepository.deleteAllByProduct(foundProduct);
         // 5. 삭제
         productRepository.delete(foundProduct);
     }
