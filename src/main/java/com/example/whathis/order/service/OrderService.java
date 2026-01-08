@@ -6,6 +6,7 @@ import com.example.whathis.common.order.OrderStatus;
 import com.example.whathis.order.dto.request.OrderCreateRequest;
 import com.example.whathis.order.dto.response.OrderCreateResponse;
 import com.example.whathis.order.dto.response.OrderResponse;
+import com.example.whathis.order.dto.response.ProductBuyerResponse;
 import com.example.whathis.order.entity.Order;
 import com.example.whathis.order.repository.OrderRepository;
 import com.example.whathis.product.entity.Product;
@@ -21,12 +22,16 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-@Transactional
+@Transactional(readOnly = true)
 public class OrderService {
 
     private final OrderRepository orderRepository;
     private final ProductRepository productRepository;
 
+    // 취소 사유가 펀딩 실패로 인한 취소인 것
+    private static final String FUNDING_FAIL_REASON = "펀딩 실패로 인한 자동 환불";
+
+    @Transactional
     public OrderCreateResponse createOrder(User buyer, OrderCreateRequest request) {
         // 상품 조회
         Product product = productRepository.findById(request.getProductId())
@@ -63,7 +68,6 @@ public class OrderService {
         return OrderCreateResponse.from(order);
     }
 
-    @Transactional(readOnly = true)
     public List<OrderResponse> getOrderByUser(User buyer) {
         List<Order> orders = orderRepository.findAllByBuyerOrderByIdDesc(buyer);
 
@@ -72,11 +76,28 @@ public class OrderService {
                 .collect(Collectors.toList());
     }
 
-    @Transactional(readOnly = true)
     public OrderResponse getOrderByUserAndId(User buyer, Long orderId) {
         Order order = orderRepository.findByBuyerAndId(buyer, orderId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.ORDER_NOT_FOUND));
 
         return OrderResponse.from(order);
+    }
+
+    public List<ProductBuyerResponse> getProductBuyers(Long productId, User seller) {
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.PRODUCT_NOT_FOUND));
+
+        if(!product.getSeller().getId().equals(seller.getId())) {
+            throw new BusinessException(ErrorCode.ACCESS_DENIED);
+        }
+
+        return orderRepository.findAllByProductIdAndSeller(
+                productId, seller,
+                        OrderStatus.PENDING,
+                        OrderStatus.CANCELLED,
+                        FUNDING_FAIL_REASON)
+                .stream()
+                .map(ProductBuyerResponse::from)
+                .collect(Collectors.toList());
     }
 }
