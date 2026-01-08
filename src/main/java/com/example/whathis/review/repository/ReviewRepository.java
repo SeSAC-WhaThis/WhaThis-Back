@@ -2,6 +2,8 @@ package com.example.whathis.review.repository;
 
 import com.example.whathis.review.entity.Review;
 import java.util.List;
+
+import com.example.whathis.user.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -26,4 +28,10 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
             "FROM Review r " +
             "WHERE r.product.seller.id = :sellerId")
     Double findRatingAvgBySellerId(@Param("sellerId") Long sellerId);
+
+    // 해당 유저의 리뷰 모두 삭제
+    void deleteAllByUser(User user);
+
+    // 해당 유저의 상품에 달린 리뷰 모두 삭제
+    void deleteAllByProductSeller(User seller);
 }

@@ -85,7 +85,7 @@ public class FollowService {
 
         for (ProductResponse response : responses) {
             Long likeCount = productLikeRepository.countByProductId(response.getId());
-            response.setLikeCount(null);
+            response.setLikeCount(likeCount);
 
             boolean isLiked = false;
             if (currentUser != null) {

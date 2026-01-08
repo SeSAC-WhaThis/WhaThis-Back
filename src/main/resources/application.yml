@@ -31,6 +31,19 @@ spring:
     init:
       mode: never
 
+  # OPEN AI 설정
+  ai:
+    openai:
+      api-key: ${OPENAI_API_KEY}
+      chat:
+        options:
+          model: gpt-4o-mini
+    chat:
+      memory:
+        repository:
+          jdbc:
+            initialize-schema: always # AI 채팅 내역 저장 스키마 자동 생성
+
 # 로깅 설정
 logging:
   level:

@@ -5,6 +5,7 @@ import com.example.whathis.common.exception.ErrorCode;
 import com.example.whathis.common.order.OrderStatus;
 import com.example.whathis.order.dto.request.OrderCreateRequest;
 import com.example.whathis.order.dto.response.OrderCreateResponse;
+import com.example.whathis.order.dto.response.OrderResponse;
 import com.example.whathis.order.entity.Order;
 import com.example.whathis.order.repository.OrderRepository;
 import com.example.whathis.product.entity.Product;
@@ -63,11 +64,19 @@ public class OrderService {
     }
 
     @Transactional(readOnly = true)
-    public List<OrderCreateResponse> getOrderByUser(User buyer) {
+    public List<OrderResponse> getOrderByUser(User buyer) {
         List<Order> orders = orderRepository.findAllByBuyerOrderByIdDesc(buyer);
 
         return orders.stream()
-                .map(OrderCreateResponse::from)
+                .map(OrderResponse::from)
                 .collect(Collectors.toList());
+    }
+
+    @Transactional(readOnly = true)
+    public OrderResponse getOrderByUserAndId(User buyer, Long orderId) {
+        Order order = orderRepository.findByBuyerAndId(buyer, orderId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.ORDER_NOT_FOUND));
+
+        return OrderResponse.from(order);
     }
 }
