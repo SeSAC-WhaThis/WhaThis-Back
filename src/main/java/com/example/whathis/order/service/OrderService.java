@@ -32,6 +32,11 @@ public class OrderService {
         Product product = productRepository.findById(request.getProductId())
                 .orElseThrow(() -> new BusinessException(ErrorCode.PRODUCT_NOT_FOUND));
 
+        // 본인이 등록한 상품인지 확인
+        if(buyer.getId().equals(product.getSeller().getId())) {
+            throw new BusinessException(ErrorCode.CANNOT_SELF_ORDER);
+        }
+
         // 재고 확인
         if (!product.hasStock(request.getQuantity())) {
             throw new BusinessException(ErrorCode.OUT_OF_STOCK);

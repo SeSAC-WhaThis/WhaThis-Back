@@ -94,14 +94,10 @@ public class PaymentService {
 
     public void cancelPayment(User user, PaymentCancelRequest request) {
         String paymentId = request.getPaymentId();
-        String reason = request.getCancelReason();
 
         // 주문 및 결제 정보 조회
         Order order = orderRepository.findByOrderNumber(paymentId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.ORDER_NOT_FOUND));
-
-        Payment payment = paymentRepository.findByOrder(order)
-                .orElseThrow(() -> new BusinessException(ErrorCode.PAYMENT_NOT_FOUND));
 
         if(!order.getBuyer().getId().equals(user.getId())) {
             throw new BusinessException(ErrorCode.NOT_YOUR_ORDER);
@@ -111,28 +107,45 @@ public class PaymentService {
             throw new BusinessException(ErrorCode.CANNOT_CANCEL_ORDER);
         }
 
-        // 포트원 결제 취소 API 호출
+        processRefund(order, request.getCancelReason()); // 공통 메서드 호출
+    }
+
+    // 스케줄러(ProductScheduler)에 의한 강제 환불
+    public void refundBySystem(Order order) {
+        Order managedOrder = orderRepository.findById(order.getId())
+                .orElseThrow(() -> new BusinessException(ErrorCode.ORDER_NOT_FOUND));
+
+        // RESERVED 상태가 아니라면 환불 처리를 건너뜀
+        if (managedOrder.getStatus() != OrderStatus.RESERVED) {
+            return;
+        }
+        processRefund(managedOrder, "펀딩 실패로 인한 자동 환불");
+    }
+
+    // 환불 공통 로직
+    private void processRefund(Order order, String reason) {
+        Payment payment = paymentRepository.findByOrder(order)
+                .orElseThrow(() -> new BusinessException(ErrorCode.PAYMENT_NOT_FOUND));
+
+        // 포트원 API 환불 요청
         try {
-            JsonNode response = webClient.post()
-                    .uri("/payments/" + paymentId + "/cancel")
+            webClient.post()
+                    .uri("/payments/" + order.getOrderNumber() + "/cancel")
                     .header("Authorization", "PortOne " + apiSecret)
                     .contentType(MediaType.APPLICATION_JSON)
                     .bodyValue(Map.of("reason", reason))
                     .retrieve()
                     .bodyToMono(JsonNode.class)
                     .block();
-
-            // 포트원 V2 에러 응답 체크
-            if (response == null || (response.has("code") && response.get("code").asInt() != 0)) {
-                throw new BusinessException(ErrorCode.PAYMENT_CANCEL_FAILED);
-            }
-
         } catch (Exception e) {
-            throw new BusinessException(ErrorCode.PG_CONNECT_ERROR);
+            throw new BusinessException(ErrorCode.PAYMENT_CANCEL_FAILED);
         }
 
-        order.getProduct().increaseInventoryAndDecreaseCurrentAmount(order.getQuantity());
+        // 주문과 결제 상태 CANCELLED로 변경
         order.cancelOrder(reason);
         payment.cancelPayment(reason);
+
+        // 상품 재고 및 현재 금액 복구
+        order.getProduct().increaseInventoryAndDecreaseCurrentAmount(order.getQuantity());
     }
 }
