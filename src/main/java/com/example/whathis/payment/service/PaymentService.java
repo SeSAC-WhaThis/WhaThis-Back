@@ -23,6 +23,8 @@ import org.springframework.web.reactive.function.client.WebClient;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -147,5 +149,19 @@ public class PaymentService {
 
         // 상품 재고 및 현재 금액 복구
         order.getProduct().increaseInventoryAndDecreaseCurrentAmount(order.getQuantity());
+    }
+
+    // 판매자 탈퇴 시 결제완료인 주문 일괄 환불
+    public void refundAllForSellerWithdrawal(User seller) {
+        // 환불 대상 상태 : RESERVED, CONFIRMED
+        List<OrderStatus> activeStatuses = Arrays.asList(OrderStatus.RESERVED, OrderStatus.CONFIRMED);
+
+        // 해당 판매자의 상품에 대한 유효 주문 조회
+        List<Order> activeOrders = orderRepository.findAllByProductSellerAndStatusIn(seller, activeStatuses);
+
+        // 하나씩 환불 처리
+        for (Order order : activeOrders) {
+            processRefund(order, "판매자 탈퇴로 인한 펀딩 취소 및 자동 환불");
+        }
     }
 }
