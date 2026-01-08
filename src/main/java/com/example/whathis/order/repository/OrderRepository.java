@@ -52,4 +52,14 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
             @Param("pendingStatus") OrderStatus pendingStatus,
             @Param("cancelStatus") OrderStatus cancelStatus,
             @Param("cancelReason") String cancelReason);
+
+    // 판매자의 상품 중 RESERVED, CONFIRMED인 주문 조회
+    @Query("SELECT o FROM Order o " +
+            "JOIN FETCH o.product p " +
+            "WHERE p.seller = :seller " +
+            "AND o.status IN :statuses")
+    List<Order> findAllByProductSellerAndStatusIn(
+            @Param("seller") User seller,
+            @Param("statuses") List<OrderStatus> statuses
+    );
 }

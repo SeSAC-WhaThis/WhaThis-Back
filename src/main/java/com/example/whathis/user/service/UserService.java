@@ -11,6 +11,7 @@ import com.example.whathis.auth.dto.response.TokenResponse;
 import com.example.whathis.follow.repository.FollowRepository;
 import com.example.whathis.order.repository.OrderRepository;
 import com.example.whathis.payment.repository.PaymentRepository;
+import com.example.whathis.payment.service.PaymentService;
 import com.example.whathis.product.dto.response.ProductResponse;
 import com.example.whathis.product.dto.response.UserProfileResponse;
 import com.example.whathis.product.entity.Product;
@@ -42,6 +43,7 @@ public class UserService {
     private final OrderRepository orderRepository;
     private final ProductLikeRepository productLikeRepository;
     private final PaymentRepository paymentRepository;
+    private final PaymentService paymentService;
 
     @Transactional(readOnly = true)
     public UserResponse getProfile(User user) {
@@ -100,6 +102,9 @@ public class UserService {
         orderRepository.deleteAllByBuyer(currentUser);
         reviewRepository.deleteAllByUser(currentUser);
         productLikeRepository.deleteAllByUser(currentUser);
+
+        // 판매자 입장에서 데이터 삭제하기 전에 내 상품의 구매내역 환불처리
+        paymentService.refundAllForSellerWithdrawal(currentUser);
 
         // 판매자 입장에서 내 상품과 관련된 데이터(결제, 주문, 리뷰, 좋아요) 삭제 후 상품 삭제
         paymentRepository.deleteAllByOrderProductSeller(currentUser);
