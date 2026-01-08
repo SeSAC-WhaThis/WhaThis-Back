@@ -53,11 +53,12 @@ public class UserService {
                 .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
 
         if (request.getNickname() != null) {
-            if (currentUser.getNickname().equals(request.getNickname())) {
-                throw new BusinessException(ErrorCode.SAME_AS_CURRENT_NICKNAME);
-            }
-            if (userRepository.existsByNickname(request.getNickname())) {
-                throw new BusinessException(ErrorCode.DUPLICATE_NICKNAME);
+            // 현재 내 닉네임과 다르다면 중복 검사
+            // 현재 내 닉네임과 같다면 검사 생략
+            if (!currentUser.getNickname().equals(request.getNickname())) {
+                if (userRepository.existsByNickname(request.getNickname())) {
+                    throw new BusinessException(ErrorCode.DUPLICATE_NICKNAME);
+                }
             }
         }
 
