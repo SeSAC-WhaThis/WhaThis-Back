@@ -12,6 +12,8 @@ import org.apache.coyote.Response;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -62,6 +64,8 @@ public class FollowController {
         return ResponseEntity.ok(ApiResponse.success(response));
     }
 
+    // 팔로우한 사용자의 상품 목록 조회 API (무한 스크롤 지원)
+    // 예시 요청: GET /follows/products?page=0&size=12
     @GetMapping("/products")
     public ResponseEntity<ApiResponse<PageResponse<ProductResponse>>> getFollowerProducts(
             @RequestParam(defaultValue = "0") int page,
