@@ -1,6 +1,7 @@
 package com.example.whathis.follow.controller;
 
 import com.example.whathis.common.response.ApiResponse;
+import com.example.whathis.common.response.PageResponse;
 import com.example.whathis.config.CustomUserDetails;
 import com.example.whathis.follow.dto.response.FollowListResponse;
 import com.example.whathis.follow.service.FollowService;
@@ -8,6 +9,10 @@ import com.example.whathis.product.dto.response.ProductResponse;
 import com.example.whathis.product.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.apache.coyote.Response;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -57,11 +62,15 @@ public class FollowController {
         return ResponseEntity.ok(ApiResponse.success(response));
     }
 
+    // 팔로우한 사용자의 상품 목록 조회 API (무한 스크롤 지원)
+    // 예시 요청: GET /follows/products?page=0&size=12
     @GetMapping("/products")
-    public ResponseEntity<ApiResponse<List<ProductResponse>>> getFollowerProducts(
-            @AuthenticationPrincipal CustomUserDetails userDetails
+    public ResponseEntity<ApiResponse<PageResponse<ProductResponse>>> getFollowerProducts(
+            @AuthenticationPrincipal CustomUserDetails userDetails,
+            @PageableDefault(size = 12, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable
     ) {
-        List<ProductResponse> response = followService.getProductByFollowerId(userDetails.getUser());
+        Page<ProductResponse> productPage = followService.getProductByFollowerId(userDetails.getUser(), pageable);
+        PageResponse<ProductResponse> response = PageResponse.of(productPage);
         return ResponseEntity.ok(ApiResponse.success(response));
     }
 }

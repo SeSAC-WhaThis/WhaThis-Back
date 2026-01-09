@@ -83,17 +83,23 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
                      "WHERE p.category.id = :categoryId")
        Page<Product> findAllByCategoryId(@Param("categoryId") Long categoryId, Pageable pageable);
 
-       // 사용자가 팔로우한 판매자들의 진행 중인 상품들 조회
-       @Query("SELECT p FROM Product p " +
-                     "JOIN FETCH p.seller " +
-                     "LEFT JOIN FETCH p.category " +
-                     "WHERE p.seller.id IN (" +
-                     "SELECT f.following.id FROM Follow f " +
-                     "WHERE f.follower.id = :followerId" +
-                     ") AND p.startDate <= CURRENT_TIMESTAMP " +
-                     "AND p.endDate > CURRENT_TIMESTAMP " +
-                     "ORDER BY p.createdAt DESC")
-       List<Product> findProductsByFollowerId(@Param("followerId") Long followerId);
+    // 사용자가 팔로우한 판매자들의 진행 중인 상품들 조회 (페이징 적용)
+    // fetch join을 사용하므로 countQuery를 별도로 명시해야 함
+    @Query(value = "SELECT p FROM Product p " +
+            "JOIN FETCH p.seller " +
+            "LEFT JOIN FETCH p.category " +
+            "WHERE p.seller.id IN (" +
+            "SELECT f.following.id FROM Follow f " +
+            "WHERE f.follower.id = :followerId" +
+            ") AND p.startDate <= CURRENT_TIMESTAMP " +
+            "AND p.endDate > CURRENT_TIMESTAMP",
+            countQuery = "SELECT COUNT(p) FROM Product p " +
+                    "WHERE p.seller.id IN (" +
+                    "SELECT f.following.id FROM Follow f " +
+                    "WHERE f.follower.id = :followerId" +
+                    ") AND p.startDate <= CURRENT_TIMESTAMP " +
+                    "AND p.endDate > CURRENT_TIMESTAMP")
+    Page<Product> findProductsByFollowerId(@Param("followerId") Long followerId, Pageable pageable);
 
        // endDate가 지났고 RESERVED 상태의 주문이 있는 상품 조회
        @Query("SELECT DISTINCT o.product " +
