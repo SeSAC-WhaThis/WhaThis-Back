@@ -235,6 +235,17 @@ public class ProductService {
                 .collect(Collectors.toList());
     }
 
+    // 내가 등록한 제품 전체 조회 - 페이징
+    public Page<ProductResponse> findAllMyProducts(User currentUser, Pageable pageable) {
+        // 유저 로그인 체크
+        if (currentUser == null) {
+            throw new BusinessException(ErrorCode.UNAUTHORIZED, "로그인이 필요합니다.");
+        }
+
+        return productRepository.findAllSellingProducts(currentUser.getId(), pageable)
+                .map(ProductResponse::from);
+    }
+
     // 특정 유저가 생성한 제품 전체 조회 (유저 ID 기반)
     public List<ProductResponse> findAllProductsByUserId(Long userId) {
         // 유저 존재 여부 확인

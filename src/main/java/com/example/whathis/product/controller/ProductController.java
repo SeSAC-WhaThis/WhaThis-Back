@@ -64,11 +64,15 @@ public class ProductController {
 
     // 본인 등록 상품 목록 조회
     @GetMapping("/my")
-    public ResponseEntity<ApiResponse<List<ProductResponse>>> findAllMyProducts(
+    public ResponseEntity<ApiResponse<PageResponse<ProductResponse>>> findAllMyProducts(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "12") int size,
             @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
         User currentUser = userDetails != null ? userDetails.getUser() : null;
-        List<ProductResponse> response = productService.findAllMyProducts(currentUser);
+        Pageable pageable = PageRequest.of(page, size);
+        Page<ProductResponse> productPage = productService.findAllMyProducts(currentUser, pageable);
+        PageResponse<ProductResponse> response = PageResponse.of(productPage);
         return ResponseEntity.ok(ApiResponse.success(response));
     }
 

@@ -17,9 +17,13 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 import java.util.stream.Collectors;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 @Service
 @RequiredArgsConstructor
@@ -88,6 +92,24 @@ public class FollowService {
         Page<ProductResponse> responses = productPage.map(ProductResponse::from);
 
         // 3. 좋아요 여부 및 개수 설정 (조회된 페이지 내의 상품들에 대해서만 수행)
+        for (ProductResponse response : responses.getContent()) {
+            Long likeCount = productLikeRepository.countByProductId(response.getId());
+            response.setLikeCount(likeCount);
+
+            boolean isLiked = false;
+            if (currentUser != null) {
+                isLiked = productLikeRepository.existsByUserIdAndProductId(currentUser.getId(), response.getId());
+            }
+            response.setIsLiked(isLiked);
+        }
+
+        return responses;
+    }
+
+    public Page<ProductResponse> getProductByFollowerId(User currentUser, Pageable pageable) {
+        Page<ProductResponse> responses = productRepository.findProductsByFollowerId(currentUser.getId(), pageable)
+                .map(ProductResponse::from);
+
         for (ProductResponse response : responses.getContent()) {
             Long likeCount = productLikeRepository.countByProductId(response.getId());
             response.setLikeCount(likeCount);
