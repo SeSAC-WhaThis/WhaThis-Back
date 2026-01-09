@@ -85,28 +85,6 @@ public class FollowService {
 
     // 팔로우한 사용자의 상품 목록 조회 (페이징 적용)
     public Page<ProductResponse> getProductByFollowerId(User currentUser, Pageable pageable) {
-        // 1. 페이징된 Entity 조회
-        Page<Product> productPage = productRepository.findProductsByFollowerId(currentUser.getId(), pageable);
-
-        // 2. DTO 변환
-        Page<ProductResponse> responses = productPage.map(ProductResponse::from);
-
-        // 3. 좋아요 여부 및 개수 설정 (조회된 페이지 내의 상품들에 대해서만 수행)
-        for (ProductResponse response : responses.getContent()) {
-            Long likeCount = productLikeRepository.countByProductId(response.getId());
-            response.setLikeCount(likeCount);
-
-            boolean isLiked = false;
-            if (currentUser != null) {
-                isLiked = productLikeRepository.existsByUserIdAndProductId(currentUser.getId(), response.getId());
-            }
-            response.setIsLiked(isLiked);
-        }
-
-        return responses;
-    }
-
-    public Page<ProductResponse> getProductByFollowerId(User currentUser, Pageable pageable) {
         Page<ProductResponse> responses = productRepository.findProductsByFollowerId(currentUser.getId(), pageable)
                 .map(ProductResponse::from);
 
