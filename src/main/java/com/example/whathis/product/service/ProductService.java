@@ -22,6 +22,8 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -176,6 +178,37 @@ public class ProductService {
 
         // 좋아요 상태와 수 설정
         for (ProductResponse response : responses) {
+            Long likeCount = productLikeRepository.countByProductId(response.getId());
+            response.setLikeCount(likeCount);
+
+            boolean isLiked = false;
+            if (currentUser != null) {
+                isLiked = productLikeRepository.existsByUserIdAndProductId(currentUser.getId(), response.getId());
+            }
+            response.setIsLiked(isLiked);
+        }
+
+        return responses;
+    }
+
+    // 제품 전체 조회 (또는 카테고리별 조회) - 페이징 지원
+    public Page<ProductResponse> findAll(
+            Long categoryId,
+            User currentUser,
+            Pageable pageable) {
+        // categoryId가 있으면 카테고리별 조회, 없으면 전체 조회
+        Page<Product> products;
+        if (categoryId != null) {
+            products = productRepository.findAllByCategoryId(categoryId, pageable);
+        } else {
+            // N+1 방지: seller, category를 fetch join으로 한 번에 조회
+            products = productRepository.findAllWithSellerAndCategory(pageable);
+        }
+
+        Page<ProductResponse> responses = products.map(ProductResponse::from);
+
+        // 좋아요 상태와 수 설정
+        for (ProductResponse response : responses.getContent()) {
             Long likeCount = productLikeRepository.countByProductId(response.getId());
             response.setLikeCount(likeCount);
 

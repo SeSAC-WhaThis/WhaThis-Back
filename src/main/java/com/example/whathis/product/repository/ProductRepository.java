@@ -18,82 +18,90 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface ProductRepository extends JpaRepository<Product, Long> {
 
-   // N+1 방지: seller, category를 fetch join으로 한 번에 조회
-   @Query("SELECT p FROM Product p " +
-          "JOIN FETCH p.seller " +
-          "LEFT JOIN FETCH p.category " +
-          "ORDER BY p.category.name ASC")
-   List<Product> findAllWithSellerAndCategory();
-    
-   // 페이징 & N+1 방지
-   // 프론트엔드와의 연동을 위해서 오버로딩
-    @Query("SELECT p FROM Product p " +
-           "JOIN FETCH p.seller " +
-           "LEFT JOIN FETCH p.category")
-    Page<Product> findAllWithSellerAndCategory(Pageable pageable);
+       // N+1 방지: seller, category를 fetch join으로 한 번에 조회
+       @Query("SELECT p FROM Product p " +
+                     "JOIN FETCH p.seller " +
+                     "LEFT JOIN FETCH p.category " +
+                     "ORDER BY p.category.name ASC")
+       List<Product> findAllWithSellerAndCategory();
 
-    // 단일 조회 & N+1 방지
-    @Query("SELECT p FROM Product p " +
-           "JOIN FETCH p.seller " +
-           "LEFT JOIN FETCH p.category " +
-           "WHERE p.id = :productId")
-    Optional<Product> findByIdWithSellerAndCategory(@Param("productId") Long productId);
+       // 페이징 & N+1 방지
+       // 프론트엔드와의 연동을 위해서 오버로딩
+       @Query("SELECT p FROM Product p " +
+                     "JOIN FETCH p.seller " +
+                     "LEFT JOIN FETCH p.category")
+       Page<Product> findAllWithSellerAndCategory(Pageable pageable);
 
-    // 판매자별 상품 조회 & N+1 방지
-    // 내가 등록한 상품 목록을 조회
-    @Query("SELECT p FROM Product p " +
-           "JOIN FETCH p.seller " +
-           "LEFT JOIN FETCH p.category " +
-           "WHERE p.seller.id = :sellerId")
-    List<Product> findAllSellingProducts(@Param("sellerId") Long sellerId);
+       // 단일 조회 & N+1 방지
+       @Query("SELECT p FROM Product p " +
+                     "JOIN FETCH p.seller " +
+                     "LEFT JOIN FETCH p.category " +
+                     "WHERE p.id = :productId")
+       Optional<Product> findByIdWithSellerAndCategory(@Param("productId") Long productId);
 
-    // 특정 사용자의 총 누적 판매 금액 조회
-    // 성공으로 종료된 상품의 누적 판매 금액이므로 endDate(판매 종료일)가 현재보다 과거여야하고,
-    // 현재 모금액이 목표 모금액 이상이어야 함
-    @Query("SELECT SUM(p.currentAmount) " +
-            "FROM Product p " +
-            "WHERE p.seller.id = :sellerId " +
-            "AND p.endDate < CURRENT_TIMESTAMP " +
-            "AND p.currentAmount >= p.goalAmount")
-    BigDecimal sumSalesTotalBySellerId(@Param("sellerId") Long sellerId);
+       // 판매자별 상품 조회 & N+1 방지
+       // 내가 등록한 상품 목록을 조회
+       @Query("SELECT p FROM Product p " +
+                     "JOIN FETCH p.seller " +
+                     "LEFT JOIN FETCH p.category " +
+                     "WHERE p.seller.id = :sellerId")
+       List<Product> findAllSellingProducts(@Param("sellerId") Long sellerId);
 
-    // 특정 사용자의 진행 중인 상품 목록 조회
-    // startDate(시작일)는 지났고 endDate(종료일)은 지나지 않은 상품
-    @Query("SELECT p " +
-            "FROM Product p " +
-            "JOIN FETCH p.seller " +
-            "LEFT JOIN FETCH p.category " +
-            "WHERE p.seller.id = :sellerId " +
-            "AND p.startDate <= CURRENT_TIMESTAMP " +
-            "AND p.endDate > CURRENT_TIMESTAMP " +
-            "ORDER BY p.startDate DESC")
-    List<Product> findProductsBySellerAndStatus(@Param("sellerId") Long sellerId);
-  
-    // 카테고리별 상품 조회 & N+1 방지
-    @Query("SELECT p FROM Product p " +
-           "JOIN FETCH p.seller " +
-           "LEFT JOIN FETCH p.category " +
-           "WHERE p.category.id = :categoryId")
-    List<Product> findAllByCategoryId(@Param("categoryId") Long categoryId);
+       // 특정 사용자의 총 누적 판매 금액 조회
+       // 성공으로 종료된 상품의 누적 판매 금액이므로 endDate(판매 종료일)가 현재보다 과거여야하고,
+       // 현재 모금액이 목표 모금액 이상이어야 함
+       @Query("SELECT SUM(p.currentAmount) " +
+                     "FROM Product p " +
+                     "WHERE p.seller.id = :sellerId " +
+                     "AND p.endDate < CURRENT_TIMESTAMP " +
+                     "AND p.currentAmount >= p.goalAmount")
+       BigDecimal sumSalesTotalBySellerId(@Param("sellerId") Long sellerId);
 
-    // 사용자가 팔로우한 판매자들의 진행 중인 상품들 조회
-    @Query("SELECT p FROM Product p " +
-            "JOIN FETCH p.seller " +
-            "LEFT JOIN FETCH p.category " +
-            "WHERE p.seller.id IN (" +
-            "SELECT f.following.id FROM Follow f " +
-            "WHERE f.follower.id = :followerId" +
-            ") AND p.startDate <= CURRENT_TIMESTAMP " +
-            "AND p.endDate > CURRENT_TIMESTAMP " +
-            "ORDER BY p.createdAt DESC")
-    List<Product> findProductsByFollowerId(@Param("followerId") Long followerId);
+       // 특정 사용자의 진행 중인 상품 목록 조회
+       // startDate(시작일)는 지났고 endDate(종료일)은 지나지 않은 상품
+       @Query("SELECT p " +
+                     "FROM Product p " +
+                     "JOIN FETCH p.seller " +
+                     "LEFT JOIN FETCH p.category " +
+                     "WHERE p.seller.id = :sellerId " +
+                     "AND p.startDate <= CURRENT_TIMESTAMP " +
+                     "AND p.endDate > CURRENT_TIMESTAMP " +
+                     "ORDER BY p.startDate DESC")
+       List<Product> findProductsBySellerAndStatus(@Param("sellerId") Long sellerId);
 
-    // endDate가 지났고 RESERVED 상태의 주문이 있는 상품 조회
-    @Query("SELECT DISTINCT o.product " +
-            "FROM Order o " +
-            "WHERE o.product.endDate < :now " +
-            "AND o.status = :status")
-    List<Product> findProductsWithReservedOrders(@Param("now") LocalDateTime now, @Param("status") OrderStatus status);
+       // 카테고리별 상품 조회 & N+1 방지
+       @Query("SELECT p FROM Product p " +
+                     "JOIN FETCH p.seller " +
+                     "LEFT JOIN FETCH p.category " +
+                     "WHERE p.category.id = :categoryId")
+       List<Product> findAllByCategoryId(@Param("categoryId") Long categoryId);
 
-    void deleteAllBySeller(User seller);
+       // 카테고리별 상품 조회 & N+1 방지 (페이징)
+       @Query("SELECT p FROM Product p " +
+                     "JOIN FETCH p.seller " +
+                     "LEFT JOIN FETCH p.category " +
+                     "WHERE p.category.id = :categoryId")
+       Page<Product> findAllByCategoryId(@Param("categoryId") Long categoryId, Pageable pageable);
+
+       // 사용자가 팔로우한 판매자들의 진행 중인 상품들 조회
+       @Query("SELECT p FROM Product p " +
+                     "JOIN FETCH p.seller " +
+                     "LEFT JOIN FETCH p.category " +
+                     "WHERE p.seller.id IN (" +
+                     "SELECT f.following.id FROM Follow f " +
+                     "WHERE f.follower.id = :followerId" +
+                     ") AND p.startDate <= CURRENT_TIMESTAMP " +
+                     "AND p.endDate > CURRENT_TIMESTAMP " +
+                     "ORDER BY p.createdAt DESC")
+       List<Product> findProductsByFollowerId(@Param("followerId") Long followerId);
+
+       // endDate가 지났고 RESERVED 상태의 주문이 있는 상품 조회
+       @Query("SELECT DISTINCT o.product " +
+                     "FROM Order o " +
+                     "WHERE o.product.endDate < :now " +
+                     "AND o.status = :status")
+       List<Product> findProductsWithReservedOrders(@Param("now") LocalDateTime now,
+                     @Param("status") OrderStatus status);
+
+       void deleteAllBySeller(User seller);
 }
