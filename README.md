@@ -2,7 +2,20 @@
 
 SeSAC **1차 팀 프로젝트**로 Wadiz를 벤치마킹한 **e-Commerce / 크라우드 펀딩** 웹 서비스 **WhaThis**의 백엔드 레포지토리입니다.
 
-짧은 개발 기간을 고려해 **펀딩(Funding) 기능을 우선 구현**하는 것을 1차 목표로 합니다.
+짧은 개발 기간을 고려해 **펀딩(Funding) 기능을 우선 구현**하였습니다.
+
+### 프로젝트 목적
+
+본 프로젝트는 메이커가 프로젝트르 등록하고, 서포터가 해당 프로젝트에 펀딩 형태로 참여할 수 있는 크라우드 펀딩 플랫폼을 구현. 
+
+### 프로젝트 배경
+
+와디즈 등 기존 크라우드 펀딩 서비스는 프로젝트 탐색 → 펀딩 참여 → 결과 확인이라는 명확한 사용자 흐름을 갖는다. 본 프로젝트는 이러한 구조를 참고하여 핵심 기능 위주의 MVP를 개발함으로써, 향후 확장 가능한 서비스 기반을 마련하고자 합니다.
+
+### 프로젝트 목표
+
+
+1차 MVP에서는 펀딩 핵심 플로우를 제공하는 데 집중하고, 기간(약 2주) 내에 펀딩 사이클이 정상적으로 동작하는 웹 서비스를 구현하는 것을 목표로 했습니다.
 
 ---
 
@@ -19,7 +32,7 @@ SeSAC **1차 팀 프로젝트**로 Wadiz를 벤치마킹한 **e-Commerce / 크�
   - **개발** : 2025.12.17 ~ 2026.01.08.
   
 
-- **팀 구성**: 3명
+- **팀 구성**: 4명
   - **Front-end**: 1인(이용민)
   - **Back-end**: 3인(김규리, 김수환, 김재우)
 
@@ -27,7 +40,7 @@ SeSAC **1차 팀 프로젝트**로 Wadiz를 벤치마킹한 **e-Commerce / 크�
 
 ## 핵심 범위 (MVP)
 
-### Wadiz 대표 기능 중 이번 MVP 우선순위
+### Wadiz 대표 기능 중 이번에 구현한 내용.
 
 - **펀딩(Funding)**: 출시 전 / 최초 공개 제품을 목표 금액 달성 시 프로젝트가 진행되는 구조
   - 사용자 역할: **판매자 / 구매자** (필터 또는 권한에 따라 기능/화면 분리)
@@ -37,38 +50,7 @@ SeSAC **1차 팀 프로젝트**로 Wadiz를 벤치마킹한 **e-Commerce / 크�
 
 1. **프로젝트 오픈**
 2. **펀딩 참여(예약 결제)**
-3. **마감 임박(재고 관리)**
-4. **종료(성공/실패 판별)**
-
----
-
-## 참고 기능 (확장 후보)
-
-- **국가별 카테고리 정렬이 다름**
-- **최근 검색어**
-- **프리오더(Pre-order)**: 이미 시장에 출시된 제품을 Wadiz 사용자에게 혜택과 함께 제공
-- **오픈 예정(Coming Soon)**: 판매자가 설정한 특정 시간에 펀딩이 열림
-
----
-
-## 엔티티 구성
-
-> 아래는 현재 합의된 “큰 덩어리” 기준이며, 상세 필드 / 관계는 구현 과정에서 구체화합니다.
-
-- **User**
-- **Product**
-- **Payment**
-- **Order**
-- **Follow**
-- **Category**
-- **ProductLike**
-- **Review**
-
-### 모델링 추가 결정 사항
-
-- **상품 좋아요**: `ProductLike` 엔티티로 분리
-- **조회수**: `Product` 엔티티 내 `Integer` 필드로 관리
-- **카테고리**: `Category` 엔티티로 분리
+3. **펀딩 종료(성공/실패 판별)**
 
 ---
 
@@ -90,37 +72,63 @@ SeSAC **1차 팀 프로젝트**로 Wadiz를 벤치마킹한 **e-Commerce / 크�
 ### 김재우
 
 - AI 문의 기능(Spring AI)
-- 검색 최적화(Elastic Search)
+- AI 를 통한 검색(Spring AI)
+
+## 프론트 역할
+
+### 이용민
+
+- 메인 페인지
+- 펀딩 페이지
+- 피드 페이지
+- 로그인 페이지
+- 프로필 페이지
+- 전반적인 프론트 구현
+
+---
+## 엔티티 구성
+- **User**
+- **Product**
+- **Payment**
+- **Order**
+- **Follow**
+- **Category**
+- **ProductLike**
+- **Review**
+- **SPRING_AI_CHAT_MEMORY**
+
 
 ---
 
 ## 기술 스택
 
+## 백엔드
 - Java 21
 - Spring Boot 3.5.8
 - Gradle
 - Spring Data JPA
 - Spring Security
 - Spring AI
-- Elastic Search
 - Bean Validation
-- MySQL (예정: Redis)
+- MySQL
 - Lombok
-- JUnit (spring-boot-starter-test), spring-security-test
+
+## 프론트
+
+- React
+- Vite
+- React Router DOM v7
+- Tailwind CSS
+- Axios
+- Redux
+- Redux Toolkit
+- Redux Persist
 
 ---
+##  설정 정보 관리 - 환경 변수를 사용하여 외부에서 주입하는 방식 사용
+환경변수를 세팅하여 속성값을 세팅하는 방식을 활용하였습니다.
 
-### DB 설정 방법 - 인텔리제이 내 환경 변수 방식
-
-1. `Edit Configurations...`
-2. `Build and run` 탭 -> `Modify Options` 클릭
-3. `Operating Systems` 탭 -> `Environment Variables` 선택
-4. `Environment Variables` 입력 박스 우측의 `$` 표시 선택
-5. 좌측 상단의 `+` 버튼 클릭 (행 3개 생성)
-6. `Name` 탭에 `DB_URL`, `DB_USERNAME`, `DB_PASSWORD` 입력
-7. `Value` 탭에 각각의 Name에 맞는 본인의 MySQL 정보 입력
-8. OK 버튼 클릭 후, Apply 클릭 -> OK 클릭
-
+### ex
 ```yml
   datasource:
     url: ${DB_URL}
@@ -129,9 +137,20 @@ SeSAC **1차 팀 프로젝트**로 Wadiz를 벤치마킹한 **e-Commerce / 크�
     driver-class-name: com.mysql.cj.jdbc.Driver
 ```
 
----
+application.yml에는 KEY만 세팅하고, 실제 값(DB URL/계정/비밀번호)은 IntelliJ Run/Debug 설정의 Environment Variables로 주입했습니다. 코드/레포지토리에 민감정보가 남지 않고, 실행 환경(dev/test/prod)에 따라 값만 바꿔 재사용할 수 있습니다.
 
-## 협업 규칙(초안)
+
+---
+## API 설계
+
+1. **RESTful**한 리소스 중심 설계
+2. **권한**(판매자/구매자) 및 접근 제어는 `Spring Security` 기반으로 구현
+3. **에러 응답**은 공통 포맷으로 통일(예: `code`, `message`, `errors`)
+
+
+[API 명세서](https://www.notion.so/API-2d3d63c21480801e964bcecf286b7def)
+
+## 협업 규칙
 
 ### 1. 브랜치 전략
 
@@ -161,17 +180,17 @@ SeSAC **1차 팀 프로젝트**로 Wadiz를 벤치마킹한 **e-Commerce / 크�
 
 ---
 
-## API 설계 원칙 (초안)
+## 구현하면서 어려웠거나 힘들었던 상황들.
 
-1. **RESTful**한 리소스 중심 설계
-2. **권한**(판매자/구매자) 및 접근 제어는 `Spring Security` 기반으로 구현
-3. **에러 응답**은 공통 포맷으로 통일(예: `code`, `message`, `errors`)
+### 김규리
 
----
+### 김수환
 
-## 앞으로 정리할 문서(추가 예정)
+### 김재우
 
-- [엔티티 설계 문서](docs/ENTITY_DESIGN.md)
-- 기능 명세서 (MVP 기준)
-- API 명세서 (Endpoint / Request/Response / Error)
-- DB 스키마 / ERD
+### 이용민
+[이미지 요청 통신 문제]:
+이미지 요청 통신에 관해서, 백엔드는 JSON 형태의 파일을 요청하고 있었으나, 프론트에서 보낼때는 멀티타입인 이슈가 있었다.
+fetch 요청 에서는 멀티파일 업로드가 안됨. 그래서 POST 요청을 보내서 문제를 해결.(수정 필요)
+
+
