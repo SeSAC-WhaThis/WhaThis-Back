@@ -1,6 +1,7 @@
 package com.example.whathis.product.controller;
 
 import com.example.whathis.common.response.ApiResponse;
+import com.example.whathis.common.response.PageResponse;
 import com.example.whathis.config.CustomUserDetails;
 import com.example.whathis.product.dto.request.ProductCreateRequest;
 import com.example.whathis.product.dto.request.ProductUpdateRequest;
@@ -12,16 +13,17 @@ import com.example.whathis.user.entity.User;
 import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -45,14 +47,18 @@ public class ProductController {
                 .body(ApiResponse.success(response, "제품이 성공적으로 등록되었습니다."));
     }
 
-    // 상품 목록 조회 (필터링: categoryId)
+    // 상품 목록 조회 (필터링: categoryId, 페이징: page, size)
     @GetMapping
-    public ResponseEntity<ApiResponse<List<ProductResponse>>> findAllProducts(
+    public ResponseEntity<ApiResponse<PageResponse<ProductResponse>>> findAllProducts(
             @RequestParam(required = false) Long categoryId,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "12") int size,
             @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
         User currentUser = userDetails != null ? userDetails.getUser() : null;
-        List<ProductResponse> response = productService.findAll(categoryId, currentUser);
+        Pageable pageable = PageRequest.of(page, size);
+        Page<ProductResponse> productPage = productService.findAll(categoryId, currentUser, pageable);
+        PageResponse<ProductResponse> response = PageResponse.of(productPage);
         return ResponseEntity.ok(ApiResponse.success(response));
     }
 
