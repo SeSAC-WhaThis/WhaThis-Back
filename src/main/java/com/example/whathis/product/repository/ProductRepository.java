@@ -47,6 +47,14 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
                      "WHERE p.seller.id = :sellerId")
        List<Product> findAllSellingProducts(@Param("sellerId") Long sellerId);
 
+       // 판매자별 상품 조회 & N+1 방지 (페이징)
+       @Query(value = "SELECT p FROM Product p " +
+                     "JOIN FETCH p.seller " +
+                     "LEFT JOIN FETCH p.category " +
+                     "WHERE p.seller.id = :sellerId",
+              countQuery = "SELECT count(p) FROM Product p WHERE p.seller.id = :sellerId")
+       Page<Product> findAllSellingProducts(@Param("sellerId") Long sellerId, Pageable pageable);
+
        // 특정 사용자의 총 누적 판매 금액 조회
        // 성공으로 종료된 상품의 누적 판매 금액이므로 endDate(판매 종료일)가 현재보다 과거여야하고,
        // 현재 모금액이 목표 모금액 이상이어야 함
@@ -94,6 +102,24 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
                      "AND p.endDate > CURRENT_TIMESTAMP " +
                      "ORDER BY p.createdAt DESC")
        List<Product> findProductsByFollowerId(@Param("followerId") Long followerId);
+
+       // 사용자가 팔로우한 판매자들의 진행 중인 상품들 조회 (페이징)
+       @Query(value = "SELECT p FROM Product p " +
+                     "JOIN FETCH p.seller " +
+                     "LEFT JOIN FETCH p.category " +
+                     "WHERE p.seller.id IN (" +
+                     "SELECT f.following.id FROM Follow f " +
+                     "WHERE f.follower.id = :followerId" +
+                     ") AND p.startDate <= CURRENT_TIMESTAMP " +
+                     "AND p.endDate > CURRENT_TIMESTAMP " +
+                     "ORDER BY p.createdAt DESC",
+              countQuery = "SELECT count(p) FROM Product p " +
+                     "WHERE p.seller.id IN (" +
+                     "SELECT f.following.id FROM Follow f " +
+                     "WHERE f.follower.id = :followerId" +
+                     ") AND p.startDate <= CURRENT_TIMESTAMP " +
+                     "AND p.endDate > CURRENT_TIMESTAMP")
+       Page<Product> findProductsByFollowerId(@Param("followerId") Long followerId, Pageable pageable);
 
        // endDate가 지났고 RESERVED 상태의 주문이 있는 상품 조회
        @Query("SELECT DISTINCT o.product " +

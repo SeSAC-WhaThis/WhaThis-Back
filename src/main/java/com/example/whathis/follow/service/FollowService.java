@@ -15,9 +15,13 @@ import com.example.whathis.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 import java.util.stream.Collectors;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 @Service
 @RequiredArgsConstructor
@@ -84,6 +88,24 @@ public class FollowService {
                 .collect(Collectors.toList());
 
         for (ProductResponse response : responses) {
+            Long likeCount = productLikeRepository.countByProductId(response.getId());
+            response.setLikeCount(likeCount);
+
+            boolean isLiked = false;
+            if (currentUser != null) {
+                isLiked = productLikeRepository.existsByUserIdAndProductId(currentUser.getId(), response.getId());
+            }
+            response.setIsLiked(isLiked);
+        }
+
+        return responses;
+    }
+
+    public Page<ProductResponse> getProductByFollowerId(User currentUser, Pageable pageable) {
+        Page<ProductResponse> responses = productRepository.findProductsByFollowerId(currentUser.getId(), pageable)
+                .map(ProductResponse::from);
+
+        for (ProductResponse response : responses.getContent()) {
             Long likeCount = productLikeRepository.countByProductId(response.getId());
             response.setLikeCount(likeCount);
 
